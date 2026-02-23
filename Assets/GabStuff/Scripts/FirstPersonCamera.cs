@@ -21,7 +21,8 @@ namespace GabStuff.Scripts
         {
             _mouseAim = context.ReadValue<Vector2>();
             print(_mouseAim);
-            playerCamera.transform.RotateAround(playerCamera.transform.position, Vector3.up, _mouseAim.x*xSensitivity);
+            cameraCentre.transform.RotateAround(cameraCentre.transform.position, Vector3.up, _mouseAim.x*xSensitivity);
+            playerCamera.transform.RotateAround(cameraCentre.transform.position, Vector3.forward, _mouseAim.y*ySensitivity);
         }
 
         void Update()
