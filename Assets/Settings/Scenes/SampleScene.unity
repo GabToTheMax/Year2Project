@@ -354,8 +354,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GabStuff.Scripts.FirstPersonCamera
   cameraCentre: {fileID: 46157005}
   playerCamera: {fileID: 330585543}
-  xSensitivity: 1
-  ySensitivity: 1
+  xSensitivity: 0.1
+  ySensitivity: 0.1
+  facingDirection: 0
+  forwardVector3: {x: 0, y: 0, z: 0}
 --- !u!1 &46157005
 GameObject:
   m_ObjectHideFlags: 0
@@ -481,7 +483,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: 1
