@@ -1,29 +1,58 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour
+namespace GabStuff.Scripts
 {
-    [SerializeField] private float moveRate;
-    private Rigidbody _rb;
-    private Vector3 _moveDirection;
-    private Vector3 _smoothMove;
-    
-    void Start()
+    public class PlayerMovement : MonoBehaviour
     {
-        _rb = GetComponent<Rigidbody>();
-    }
+        [SerializeField] private float moveRate;
+        [SerializeField] private float sprintRate;
+        private Rigidbody _rb;
+        private Vector3 _moveDirection;
+        private Vector3 _smoothMove;
+        private FPSCamera _fpsCamera;
+        private readonly Dictionary<string, float> _speedModifiers = new();
+    
+        void Start()
+        {
+            _rb = GetComponent<Rigidbody>();
+            _fpsCamera = GetComponent<FPSCamera>();
+            _speedModifiers.Add("Base", moveRate);
+        }
 
-    public void OnMove(InputAction.CallbackContext context)
-    {
-        _moveDirection = context.ReadValue<Vector2>();
-        _moveDirection.z = _moveDirection.y;
-        _moveDirection.y = 0;
-        print(_moveDirection);
-    }
+        public void OnMove(InputAction.CallbackContext context)
+        {
+            _moveDirection = context.ReadValue<Vector2>();
+            _moveDirection.z = _moveDirection.y;
+            _moveDirection.y = 0;
+            print(_moveDirection);
+        }
+
+        public void OnSprint(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                _speedModifiers.Add("Sprint", sprintRate);
+            }
+
+            if (context.canceled)
+            {
+                _speedModifiers.Remove("Sprint");
+            }
+        }
     
-    private void FixedUpdate()
-    {
-        _smoothMove = Vector3.Lerp(_smoothMove, _moveDirection, 0.1f);
-        _rb.AddForce(_smoothMove * (moveRate * Time.fixedDeltaTime), ForceMode.VelocityChange);
+        private void Update()
+        {
+            var forwardRotation = Quaternion.AngleAxis(_fpsCamera.playerDirection, Vector3.up);
+            
+            var forwardVector = forwardRotation * _moveDirection * _speedModifiers.Values.Sum();
+            
+            Debug.DrawLine(transform.position, transform.position + forwardVector, Color.red);
+            _smoothMove = Vector3.Lerp(_smoothMove, forwardVector, 0.1f);
+            
+            _rb.AddForce(_smoothMove, ForceMode.VelocityChange);
+        }
     }
 }
