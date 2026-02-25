@@ -59,13 +59,11 @@ namespace GabStuff.Scripts
         private void RotateX()
         {
             _xRotation += _smoothMouseInput.x * cameraSensitivityX;
-            playerDirection = _xRotation;
-            cameraGameObject.transform.rotation = Quaternion.Euler(cameraGameObject.transform.rotation.eulerAngles.x, _xRotation, cameraGameObject.transform.rotation.eulerAngles.z); ;
+            cameraGameObject.transform.rotation = Quaternion.Euler(cameraGameObject.transform.rotation.eulerAngles.x, _xRotation, cameraGameObject.transform.rotation.eulerAngles.z);
         }
 
         private void RotateY()
         {
-            // cameraGameObject.transform.Rotate(-_smoothMouseInput.y * cameraSensitivityY, 0,0);
             _yRotation += -_smoothMouseInput.y * cameraSensitivityY;
             _yRotation = Mathf.Clamp(_yRotation, -90f, 90f);
             cameraGameObject.transform.rotation = Quaternion.Euler(_yRotation, cameraGameObject.transform.rotation.eulerAngles.y, cameraGameObject.transform.rotation.eulerAngles.z);
