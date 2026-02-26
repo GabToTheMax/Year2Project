@@ -7,6 +7,9 @@ namespace GabStuff.Scripts
 {
     public class PlayerMovement : MonoBehaviour
     {
+        // TODO Deal with linear drag making gravity slow
+        
+        #region Variables
         [SerializeField] private float moveRate;
         [SerializeField] private float sprintRate;
         private Rigidbody _rb;
@@ -14,8 +17,9 @@ namespace GabStuff.Scripts
         private Vector3 _smoothMove;
         private FPSCamera _fpsCamera;
         private readonly Dictionary<string, float> _speedModifiers = new();
-    
-        void Start()
+        #endregion
+
+        private void Start()
         {
             _rb = GetComponent<Rigidbody>();
             _fpsCamera = GetComponent<FPSCamera>();
@@ -27,7 +31,6 @@ namespace GabStuff.Scripts
             _moveDirection = context.ReadValue<Vector2>();
             _moveDirection.z = _moveDirection.y;
             _moveDirection.y = 0;
-            print(_moveDirection);
         }
 
         public void OnSprint(InputAction.CallbackContext context)
@@ -43,7 +46,7 @@ namespace GabStuff.Scripts
             }
         }
     
-        private void Update()
+        private void FixedUpdate()
         {
             var forwardRotation = Quaternion.AngleAxis(_fpsCamera.playerDirection, Vector3.up);
             

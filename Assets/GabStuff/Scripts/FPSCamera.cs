@@ -6,20 +6,21 @@ namespace GabStuff.Scripts
 {
     public class FPSCamera : MonoBehaviour
     {
+        #region Variables
         [SerializeField] private GameObject cameraGameObject;
         [SerializeField] private GameObject cameraVertical;
         [SerializeField] private float cameraSensitivityX;
         [SerializeField] private float cameraSensitivityY;
         [SerializeField] private float fieldOfView = 90;
         [SerializeField] private float smoothing;
-        public float playerDirection;
+        [HideInInspector] public float playerDirection;
         private Vector2 _mouseInput;
         private Vector2 _smoothMouseInput;
         private Camera _camera;
         private float _xRotation;
         private float _yRotation;
+        #endregion
         
-
         private void Start()
         {
             _camera = cameraGameObject.GetComponent<Camera>();
@@ -59,6 +60,7 @@ namespace GabStuff.Scripts
         private void RotateX()
         {
             _xRotation += _smoothMouseInput.x * cameraSensitivityX;
+            playerDirection = _xRotation;
             cameraGameObject.transform.rotation = Quaternion.Euler(cameraGameObject.transform.rotation.eulerAngles.x, _xRotation, cameraGameObject.transform.rotation.eulerAngles.z);
         }
 
@@ -67,7 +69,6 @@ namespace GabStuff.Scripts
             _yRotation += -_smoothMouseInput.y * cameraSensitivityY;
             _yRotation = Mathf.Clamp(_yRotation, -90f, 90f);
             cameraGameObject.transform.rotation = Quaternion.Euler(_yRotation, cameraGameObject.transform.rotation.eulerAngles.y, cameraGameObject.transform.rotation.eulerAngles.z);
-            print(_yRotation);
         }
     }
 }
