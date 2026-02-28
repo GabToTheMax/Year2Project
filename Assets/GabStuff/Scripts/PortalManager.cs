@@ -1,8 +1,26 @@
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace GabStuff.Scripts
 {
+    public class Portal
+    {
+        public readonly PortalScript PortalScript;
+        public readonly GameObject Object;
+        public readonly Camera Camera;
+        public readonly int Index;
+
+        public Portal(GameObject o)
+        {
+            Object = o;
+            PortalScript = Object.GetComponent<PortalScript>();
+            Index = PortalScript.index;
+            Camera = Object.GetComponentInChildren<Camera>();
+        }
+    }
+    
     public sealed class PortalManager
     {
         #region Singleton Setup
@@ -23,17 +41,15 @@ namespace GabStuff.Scripts
         }
         #endregion
 
-        public readonly GameObject[] PortalObjects = new GameObject[2];
-        public readonly PortalScript[] PortalScripts = new PortalScript[2];
-        
-        public void SetPortal(GameObject portal)
+        public readonly Portal[] Portals = new Portal[2];
+
+        public void SetPortal(Portal portal)
         {
-            var portalScript = portal.GetComponent<PortalScript>();
-            var index = portalScript.portalIndex;
-            PortalObjects[index] = portal;
-            PortalScripts[index] = portalScript;
+            if (Portals[portal.Index] != null)
+            {
+                throw new Exception("Portals must have different indexes");
+            }
+            Portals[portal.Index] = portal;
         }
-        
-        
     }
 }
