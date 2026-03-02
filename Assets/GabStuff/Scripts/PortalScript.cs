@@ -40,9 +40,10 @@ namespace GabStuff.Scripts
         private void MoveCamera()
         {
             vectorToPlayerCamera = _playerCamera.transform.position - transform.position;
+            vectorToPlayerCamera.y *= -1;
             // Quaternion black magic to account for rotated portals
-            // vectorToPlayerCamera = transform.rotation * Quaternion.Inverse(_otherPortal.Object.transform.rotation) * vectorToPlayerCamera;
-            vectorToPlayerCamera = Quaternion.Inverse(_otherPortal.Object.transform.rotation) * transform.rotation * vectorToPlayerCamera;
+            vectorToPlayerCamera = _otherPortal.Object.transform.rotation * Quaternion.Inverse(transform.rotation) * vectorToPlayerCamera;
+            
             
             Vector3 otherPortalPos = _otherPortal.Object.transform.position;
             _thisPortal.Camera.transform.position = otherPortalPos - vectorToPlayerCamera;
