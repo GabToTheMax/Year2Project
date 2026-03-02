@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Assets.GabStuff.Scripts;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -52,9 +53,9 @@ namespace GabStuff.Scripts
             
             var forwardVector = forwardRotation * _moveDirection * _speedModifiers.Values.Sum();
             
-            Debug.DrawLine(transform.position, transform.position + forwardVector, Color.red);
             _smoothMove = Vector3.Lerp(_smoothMove, forwardVector, 0.1f);
             
+            Debug.DrawLine(transform.position, transform.position + forwardVector, Color.red);
             _rb.AddForce(_smoothMove, ForceMode.VelocityChange);
         }
     }

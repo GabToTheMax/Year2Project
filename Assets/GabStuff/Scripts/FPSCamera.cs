@@ -1,8 +1,8 @@
-using System.Collections;
+using GabStuff.Scripts;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace GabStuff.Scripts
+namespace Assets.GabStuff.Scripts
 {
     public class FPSCamera : MonoBehaviour
     {

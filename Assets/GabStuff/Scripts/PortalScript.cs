@@ -1,4 +1,5 @@
 using System;
+using Assets.GabStuff.Scripts;
 using UnityEngine;
 
 namespace GabStuff.Scripts
