@@ -17,7 +17,7 @@ namespace GabStuff.Scripts
         private Portal _thisPortal;
         private Portal _otherPortal;
         private Camera _playerCamera;
-        private Quaternion _portalRotationDifference;
+        public Quaternion _portalRotationDifference;
         
         #endregion
     
@@ -51,18 +51,26 @@ namespace GabStuff.Scripts
             vectorToPlayerCamera = Quaternion.AngleAxis(180, _thisPortal.Object.transform.forward) * vectorToPlayerCamera;
             Vector3 otherPortalPos = _otherPortal.Object.transform.position;
             
-            Debug.DrawLine(otherPortalPos, otherPortalPos + _portalRotationDifference*vectorToPlayerCamera, Color.orange);
+            //Debug.DrawLine(otherPortalPos, otherPortalPos + _portalRotationDifference*vectorToPlayerCamera, Color.orange);
             
             // Quaternion black magic to account for rotated portals
             vectorToPlayerCamera = Quaternion.Inverse(gameObject.transform.rotation) * vectorToPlayerCamera;
             
             _thisPortal.Camera.transform.position = otherPortalPos + _otherPortal.Object.transform.rotation * vectorToPlayerCamera;
         }
-        
+
         private void RotateCamera()
         {
-            Vector3 vectorToOtherPortalFromCamera = _thisPortal.Camera.transform.position - _otherPortal.Object.transform.position;
-            _thisPortal.Camera.transform.rotation = Quaternion.LookRotation(-vectorToOtherPortalFromCamera, _portalRotationDifference*Vector3.up);
+            Vector3 vectorToOtherPortal = _otherPortal.Object.transform.position - _thisPortal.Camera.transform.position;
+            Vector3 upVector = Quaternion.AngleAxis(180, _otherPortal.Object.transform.forward) * _portalRotationDifference * player.transform.up;
+
+            #region debug lines
+            Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + upVector, Color.red);
+            Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + vectorToOtherPortal, Color.orange);
+            #endregion
+
+            
+            _thisPortal.Camera.transform.rotation = Quaternion.LookRotation(vectorToOtherPortal, upVector);
         }
 
         private void ZoomInCamera()
