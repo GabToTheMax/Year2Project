@@ -39,6 +39,7 @@ namespace GabStuff.Scripts
         {
             MoveCamera();
             RotateCamera();
+            ZoomInCamera();
         }
         
         private void MoveCamera()
