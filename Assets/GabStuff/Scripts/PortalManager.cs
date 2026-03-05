@@ -10,14 +10,16 @@ namespace GabStuff.Scripts
         public readonly PortalScript PortalScript;
         public readonly GameObject Object;
         public readonly Camera Camera;
+        public readonly Material PortalMaterial;
         public readonly int Index;
 
-        public Portal(GameObject o)
+        public Portal(GameObject o, Material m)
         {
             Object = o;
             PortalScript = Object.GetComponent<PortalScript>();
             Index = PortalScript.index;
             Camera = Object.GetComponentInChildren<Camera>();
+            PortalMaterial = m;
         }
     }
     

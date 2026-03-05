@@ -10,6 +10,7 @@ namespace GabStuff.Scripts
         
         [SerializeField] private GameObject player;
         [SerializeField] private int debugRotationValue;
+        [SerializeField] private Material portalMaterial;
         public int index;
         public Vector3 vectorToPlayerCamera;
         private FPSCamera _fpsCam;
@@ -22,7 +23,7 @@ namespace GabStuff.Scripts
     
         private void Awake()
         {
-            _thisPortal = new Portal(gameObject);
+            _thisPortal = new Portal(gameObject, portalMaterial);
             PortalManager.Instance.SetPortal(_thisPortal);
             
             _fpsCam = player.GetComponent<FPSCamera>();
@@ -67,6 +68,13 @@ namespace GabStuff.Scripts
         private void ZoomInCamera()
         {
             _thisPortal.Camera.WorldToScreenPoint(_otherPortal.Object.transform.position);
+            Texture2D portalTexture = _thisPortal.PortalMaterial.mainTexture as Texture2D;
+            if (portalTexture != null)
+            {
+                print("Texture is not null");
+                portalTexture.SetPixel(0, 0, Color.red);
+                _thisPortal.PortalMaterial.mainTexture = portalTexture;
+            }
         }
     }
 }

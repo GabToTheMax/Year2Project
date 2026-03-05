@@ -765,6 +765,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 40696115}
+    - target: {fileID: 9038452939446156063, guid: 90581aa05e56a3345a094920a9002061, type: 3}
+      propertyPath: portalMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: eb08db29f2f24724384933384448f302, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -925,8 +929,8 @@ Transform:
   m_GameObject: {fileID: 1203250073}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 17.6}
-  m_LocalScale: {x: 50, y: 0.2, z: 50}
+  m_LocalPosition: {x: 0, y: -6.04, z: 17.6}
+  m_LocalScale: {x: 50, y: 12.311, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1003,6 +1007,10 @@ PrefabInstance:
       propertyPath: portalIndex
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9038452939446156063, guid: 90581aa05e56a3345a094920a9002061, type: 3}
+      propertyPath: portalMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 643d751c2edb3894691ee0927144342c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1114,8 +1122,8 @@ Transform:
   m_GameObject: {fileID: 1632673761}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -32.3}
-  m_LocalScale: {x: 50, y: 0.2, z: 50}
+  m_LocalPosition: {x: 0, y: -6.04, z: -32.3}
+  m_LocalScale: {x: 50, y: 12.311, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
