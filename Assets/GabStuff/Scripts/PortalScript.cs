@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Assets.GabStuff.Scripts;
 using UnityEngine;
 
@@ -17,7 +18,9 @@ namespace GabStuff.Scripts
         private Portal _thisPortal;
         private Portal _otherPortal;
         private Camera _playerCamera;
-        public Quaternion _portalRotationDifference;
+        private Mesh _thisPortalMesh;
+        public Quaternion portalRotationDifference;
+        public Vector3[] vertices;
         
         #endregion
     
@@ -28,6 +31,7 @@ namespace GabStuff.Scripts
             
             _fpsCam = player.GetComponent<FPSCamera>();
             _playerCamera = player.GetComponentInChildren<Camera>();
+            _thisPortalMesh = GetComponent<MeshFilter>().mesh;
         }
 
         private void Start()
@@ -44,15 +48,15 @@ namespace GabStuff.Scripts
         
         private void MoveCamera()
         {
-            _portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
+            portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
             
             vectorToPlayerCamera = _playerCamera.transform.position - transform.position;
             Debug.DrawLine(transform.position, transform.position + vectorToPlayerCamera, Color.green);
             
-            vectorToPlayerCamera = Quaternion.AngleAxis(180, _thisPortal.Object.transform.forward) * vectorToPlayerCamera;
+            vectorToPlayerCamera = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up) * vectorToPlayerCamera;
             Vector3 otherPortalPos = _otherPortal.Object.transform.position;
             
-            //Debug.DrawLine(otherPortalPos, otherPortalPos + _portalRotationDifference*vectorToPlayerCamera, Color.orange);
+            // Debug.DrawLine(otherPortalPos, otherPortalPos + _portalRotationDifference*vectorToPlayerCamera, Color.orange);
             
             // Quaternion black magic to account for rotated portals
             vectorToPlayerCamera = Quaternion.Inverse(gameObject.transform.rotation) * vectorToPlayerCamera;
@@ -63,27 +67,35 @@ namespace GabStuff.Scripts
         private void RotateCamera()
         {
             Vector3 vectorToOtherPortal = _otherPortal.Object.transform.position - _thisPortal.Camera.transform.position;
-            Vector3 upVector = Quaternion.AngleAxis(180, _otherPortal.Object.transform.forward) * _portalRotationDifference * player.transform.up;
+            Vector3 upVector = Quaternion.AngleAxis(180, _otherPortal.Object.transform.up) * portalRotationDifference * player.transform.up;
 
             #region debug lines
             Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + upVector, Color.red);
             Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + vectorToOtherPortal, Color.orange);
             #endregion
-
             
             _thisPortal.Camera.transform.rotation = Quaternion.LookRotation(vectorToOtherPortal, upVector);
         }
 
         private void ZoomInCamera()
         {
-            _thisPortal.Camera.WorldToScreenPoint(_otherPortal.Object.transform.position);
-            Texture2D portalTexture = _thisPortal.PortalMaterial.mainTexture as Texture2D;
-            if (portalTexture != null)
+            print(_thisPortalMesh.vertices.Length);
+            // 00, 10, 01, 11
+            // BL  BR  TL  TR
+
+            vertices = _thisPortalMesh.vertices;
+            Vector2[] portalPositionOnCamera = new Vector2[4];
+
+            for (int i = 0; i < 4; i++)
             {
-                print("Texture is not null");
-                portalTexture.SetPixel(0, 0, Color.red);
-                _thisPortal.PortalMaterial.mainTexture = portalTexture;
+                vertices[i] = _thisPortal.Object.transform.rotation * vertices[i] * transform.localScale.x;
+                Debug.DrawLine(player.transform.position, transform.position + vertices[i], Color.red);
+                
+                portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(_otherPortal.Object.transform.transform.position + _otherPortal.PortalScript.vertices[i]);
+                portalPositionOnCamera[i] /= 1024;
+                print($"point {i}, position {portalPositionOnCamera[i]}, portal {_thisPortal.Index}");
             }
+            
         }
     }
 }
