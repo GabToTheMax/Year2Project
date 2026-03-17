@@ -95,7 +95,7 @@ namespace GabStuff.Scripts
                 portalPositionOnCamera[i] /= 1024;
                 print($"point {i}, position {portalPositionOnCamera[i]}, portal {_thisPortal.Index}");
             }
-            
+            _thisPortalMesh.SetUVs(0, new[]{portalPositionOnCamera[1], portalPositionOnCamera[0], portalPositionOnCamera[3], portalPositionOnCamera[3]});
         }
     }
 }
