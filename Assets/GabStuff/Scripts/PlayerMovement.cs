@@ -58,5 +58,6 @@ namespace GabStuff.Scripts
             Debug.DrawLine(transform.position, transform.position + forwardVector, Color.red);
             _rb.AddForce(_smoothMove, ForceMode.VelocityChange);
         }
+        
     }
 }

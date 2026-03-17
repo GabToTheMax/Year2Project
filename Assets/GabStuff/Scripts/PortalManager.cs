@@ -7,19 +7,21 @@ namespace GabStuff.Scripts
 {
     public class Portal
     {
-        public readonly PortalScript PortalScript;
+        public readonly PortalScript Script;
         public readonly GameObject Object;
         public readonly Camera Camera;
-        public readonly Material PortalMaterial;
+        public readonly Material Material;
+        public readonly Mesh Mesh;
         public readonly int Index;
 
         public Portal(GameObject o, Material m)
         {
             Object = o;
-            PortalScript = Object.GetComponent<PortalScript>();
-            Index = PortalScript.index;
+            Script = Object.GetComponent<PortalScript>();
+            Index = Script.index;
             Camera = Object.GetComponentInChildren<Camera>();
-            PortalMaterial = m;
+            Material = m;
+            Mesh = Object.GetComponentInChildren<MeshFilter>().mesh;
         }
     }
     
