@@ -17,6 +17,7 @@ namespace GabStuff.Scripts
         private Portal _thisPortal;
         private Portal _otherPortal;
         private Camera _playerCamera;
+        private Quaternion _180Flip;
         public Quaternion portalRotationDifference;
         public Vector3[] vertices;
         
@@ -37,6 +38,7 @@ namespace GabStuff.Scripts
 
         private void Update()
         {
+            _180Flip = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up);
             MoveCamera();
             RotateCamera();
             ZoomInCamera();
@@ -49,7 +51,7 @@ namespace GabStuff.Scripts
             vectorToPlayerCamera = _playerCamera.transform.position - transform.position;
             Debug.DrawLine(transform.position, transform.position + vectorToPlayerCamera, Color.green);
             
-            vectorToPlayerCamera = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up) * vectorToPlayerCamera;
+            vectorToPlayerCamera = _180Flip * vectorToPlayerCamera;
             Vector3 otherPortalPos = _otherPortal.Object.transform.position;
             
             // Debug.DrawLine(otherPortalPos, otherPortalPos + _portalRotationDifference*vectorToPlayerCamera, Color.orange);
@@ -63,7 +65,7 @@ namespace GabStuff.Scripts
         private void RotateCamera()
         {
             Vector3 vectorToOtherPortal = _otherPortal.Object.transform.position - _thisPortal.Camera.transform.position;
-            Vector3 upVector = Quaternion.AngleAxis(180, _otherPortal.Object.transform.up) * portalRotationDifference * player.transform.up;
+            Vector3 upVector = _180Flip * portalRotationDifference * player.transform.up;
 
             #region debug lines
             Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + upVector, Color.red);
@@ -78,14 +80,18 @@ namespace GabStuff.Scripts
             vertices = _thisPortal.Mesh.vertices;
             Vector2[] portalPositionOnCamera = new Vector2[vertices.Length];
 
+            
             for (int i = 0; i < vertices.Length; i++)
             {
-                vertices[i] = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up) * _thisPortal.Object.transform.rotation * vertices[i] * transform.localScale.x;
-                Debug.DrawLine(_thisPortal.Camera.transform.position,  _otherPortal.Object.transform.transform.position + _otherPortal.Script.vertices[i], Color.red);
+                // Mesh.vertices gets the position of the vertices in the mesh file, not independent of the game object,
+                // therefore they will be at the world origin. The following set of multiplications moves the vertices
+                // to align with the game object
+                
+                vertices[i] = _180Flip * _thisPortal.Object.transform.rotation * vertices[i] * transform.localScale.x;
+                //Debug.DrawLine(_thisPortal.Camera.transform.position,  _otherPortal.Object.transform.transform.position + _otherPortal.Script.vertices[i], Color.red);
                 
                 portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(_otherPortal.Object.transform.transform.position + _otherPortal.Script.vertices[i]);
                 portalPositionOnCamera[i] /= 1024;
-                print($"point {i}, position {portalPositionOnCamera[i]}, portal {_thisPortal.Index}");
             }
             _thisPortal.Mesh.SetUVs(0, portalPositionOnCamera);
         }
