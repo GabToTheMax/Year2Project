@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Assets.GabStuff.Scripts;
 using UnityEngine;
 
 namespace GabStuff.Scripts
@@ -33,7 +30,7 @@ namespace GabStuff.Scripts
 
         private void Start()
         {
-            _otherPortal = PortalManager.Instance.Portals[1 - index];
+            _otherPortal = PortalManager.Instance.GetPortal(_thisPortal);
         }
 
         private void Update()
@@ -46,8 +43,6 @@ namespace GabStuff.Scripts
         
         private void MoveCamera()
         {
-            portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
-            
             vectorToPlayerCamera = _playerCamera.transform.position - transform.position;
             Debug.DrawLine(transform.position, transform.position + vectorToPlayerCamera, Color.green);
             
@@ -57,13 +52,15 @@ namespace GabStuff.Scripts
             // Debug.DrawLine(otherPortalPos, otherPortalPos + _portalRotationDifference*vectorToPlayerCamera, Color.orange);
             
             // Quaternion black magic to account for rotated portals
-            vectorToPlayerCamera = Quaternion.Inverse(gameObject.transform.rotation) * vectorToPlayerCamera;
+            vectorToPlayerCamera = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation) * vectorToPlayerCamera;
             
-            _thisPortal.Camera.transform.position = otherPortalPos + _otherPortal.Object.transform.rotation * vectorToPlayerCamera;
+            _thisPortal.Camera.transform.position = otherPortalPos + vectorToPlayerCamera;
         }
 
         private void RotateCamera()
         {
+            portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
+
             Vector3 vectorToOtherPortal = _otherPortal.Object.transform.position - _thisPortal.Camera.transform.position;
             Vector3 upVector = _180Flip * portalRotationDifference * player.transform.up;
 

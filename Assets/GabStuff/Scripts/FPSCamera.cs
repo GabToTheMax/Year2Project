@@ -1,9 +1,7 @@
-using System;
-using GabStuff.Scripts;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Assets.GabStuff.Scripts
+namespace GabStuff.Scripts
 {
     public class FPSCamera : MonoBehaviour
     {
@@ -27,11 +25,6 @@ namespace Assets.GabStuff.Scripts
             _camera = cameraGameObject.GetComponent<Camera>();
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            
-            foreach (var portal in PortalManager.Instance.Portals)
-            {
-                portal.Camera.fieldOfView = fieldOfView;
-            }
         }
         
         public void OnCameraMove(InputAction.CallbackContext context)
@@ -60,7 +53,7 @@ namespace Assets.GabStuff.Scripts
             if (!Mathf.Approximately(_camera.fieldOfView, fieldOfView))
             {
                 _camera.fieldOfView = fieldOfView;
-                foreach (var portal in PortalManager.Instance.Portals)
+                foreach (var portal in PortalManager.Instance.GetPortals())
                 {
                     portal.Camera.fieldOfView = fieldOfView;
                 }
