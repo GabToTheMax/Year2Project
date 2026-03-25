@@ -78,7 +78,6 @@ namespace GabStuff.Scripts
             vertices = _thisPortal.Mesh.vertices;
             Vector2[] portalPositionOnCamera = new Vector2[vertices.Length];
 
-            
             for (int i = 0; i < vertices.Length; i++)
             {
                 // Mesh.vertices gets the position of the vertices in the mesh file, not independent of the game object,
@@ -86,15 +85,7 @@ namespace GabStuff.Scripts
                 // to align with the game object
                 
                 vertices[i] = _180Flip * _thisPortal.Object.transform.rotation * vertices[i] * transform.localScale.x;
-                try
-                {
-                    portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(
-                        _otherPortal.Object.transform.transform.position + _otherPortal.Script.vertices[i]);
-                }
-                catch(IndexOutOfRangeException)
-                {
-                    print(i);
-                }
+                portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(_otherPortal.Object.transform.transform.position + _otherPortal.Mesh.vertices[i]);
                         
                 portalPositionOnCamera[i] /= 1024;
             }
