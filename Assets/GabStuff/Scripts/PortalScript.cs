@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace GabStuff.Scripts
@@ -85,9 +86,16 @@ namespace GabStuff.Scripts
                 // to align with the game object
                 
                 vertices[i] = _180Flip * _thisPortal.Object.transform.rotation * vertices[i] * transform.localScale.x;
-                //Debug.DrawLine(_thisPortal.Camera.transform.position,  _otherPortal.Object.transform.transform.position + _otherPortal.Script.vertices[i], Color.red);
-                
-                portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(_otherPortal.Object.transform.transform.position + _otherPortal.Script.vertices[i]);
+                try
+                {
+                    portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(
+                        _otherPortal.Object.transform.transform.position + _otherPortal.Script.vertices[i]);
+                }
+                catch(IndexOutOfRangeException)
+                {
+                    print(i);
+                }
+                        
                 portalPositionOnCamera[i] /= 1024;
             }
             _thisPortal.Mesh.SetUVs(0, portalPositionOnCamera);
