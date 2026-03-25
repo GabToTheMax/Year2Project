@@ -50,8 +50,6 @@ namespace GabStuff.Scripts
             vectorToPlayerCamera = _180Flip * vectorToPlayerCamera;
             Vector3 otherPortalPos = _otherPortal.Object.transform.position;
             
-            // Debug.DrawLine(otherPortalPos, otherPortalPos + _portalRotationDifference*vectorToPlayerCamera, Color.orange);
-            
             // Quaternion black magic to account for rotated portals
             vectorToPlayerCamera = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation) * vectorToPlayerCamera;
             
