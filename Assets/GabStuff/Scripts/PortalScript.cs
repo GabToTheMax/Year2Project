@@ -83,9 +83,9 @@ namespace GabStuff.Scripts
                 // to align with the game object
                 
                 vertices[i] = _180Flip * _thisPortal.Object.transform.rotation * vertices[i] * transform.localScale.x;
-                portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(_otherPortal.Object.transform.transform.position + _otherPortal.Mesh.vertices[i]);
+                portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(_otherPortal.Object.transform.transform.position + vertices[i]);
                         
-                portalPositionOnCamera[i] /= 1024;
+                portalPositionOnCamera[i] /= new Vector2(1600, 900);
             }
             _thisPortal.Mesh.SetUVs(0, portalPositionOnCamera);
         }

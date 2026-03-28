@@ -53,7 +53,12 @@ namespace GabStuff.Scripts
             if (!Mathf.Approximately(_camera.fieldOfView, fieldOfView))
             {
                 _camera.fieldOfView = fieldOfView;
-                foreach (var portal in PortalManager.Instance.GetPortals())
+            }
+
+            var portals = PortalManager.Instance.GetPortals();
+            if (!Mathf.Approximately(portals[0].Camera.fieldOfView, fieldOfView))
+            {
+                foreach (Portal portal in portals)
                 {
                     portal.Camera.fieldOfView = fieldOfView;
                 }
