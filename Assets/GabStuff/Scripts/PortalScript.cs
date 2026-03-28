@@ -68,7 +68,7 @@ namespace GabStuff.Scripts
             Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + vectorToOtherPortal, Color.orange);
             #endregion
             
-            _thisPortal.Camera.transform.rotation = Quaternion.LookRotation(vectorToOtherPortal, upVector);
+            _thisPortal.Camera.transform.rotation = _180Flip * portalRotationDifference * _playerCamera.transform.rotation;
         }
 
         private void ZoomInCamera()
