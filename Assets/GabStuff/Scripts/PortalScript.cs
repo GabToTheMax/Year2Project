@@ -3,22 +3,25 @@ using UnityEngine;
 
 namespace GabStuff.Scripts
 {
+    
     public class PortalScript : MonoBehaviour
     {
         #region Variables
         
+        // TODO FIX PERMISSIONS
         [SerializeField] private GameObject player;
         [SerializeField] private int debugRotationValue;
         [SerializeField] private Material portalMaterial;
         public int index;
-        public Vector3 vectorToPlayerCamera;
         private Portal _thisPortal;
         private Portal _otherPortal;
         private Camera _playerCamera;
-        private Quaternion _180Flip;
+        private Quaternion _portalCameraRotation;
         public Quaternion portalRotationDifference;
         public Vector3[] vertices;
-        
+        public Vector3 vectorToPlayerCamera;
+        public Quaternion Flip180 { get; private set; }
+
         #endregion
     
         private void Awake()
@@ -36,7 +39,7 @@ namespace GabStuff.Scripts
 
         private void Update()
         {
-            _180Flip = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up);
+            Flip180 = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up);
             MoveCamera();
             RotateCamera();
             ZoomInCamera();
@@ -47,7 +50,7 @@ namespace GabStuff.Scripts
             vectorToPlayerCamera = _playerCamera.transform.position - transform.position;
             Debug.DrawLine(transform.position, transform.position + vectorToPlayerCamera, Color.green);
             
-            vectorToPlayerCamera = _180Flip * vectorToPlayerCamera;
+            vectorToPlayerCamera = Flip180 * vectorToPlayerCamera;
             Vector3 otherPortalPos = _otherPortal.Object.transform.position;
             
             // Quaternion black magic to account for rotated portals
@@ -59,21 +62,25 @@ namespace GabStuff.Scripts
         private void RotateCamera()
         {
             portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
-
+            _portalCameraRotation = portalRotationDifference * (Flip180 * _playerCamera.transform.rotation);
+            _thisPortal.Camera.transform.rotation = _portalCameraRotation;
+            
+            #region old rotation system
             Vector3 vectorToOtherPortal = _otherPortal.Object.transform.position - _thisPortal.Camera.transform.position;
-            Vector3 upVector = _180Flip * portalRotationDifference * player.transform.up;
-
+            Vector3 upVector = Flip180 * portalRotationDifference * player.transform.up;
+            #endregion
             #region debug lines
-            Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + upVector, Color.red);
-            Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + vectorToOtherPortal, Color.orange);
+            //Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + upVector, Color.red);
+            //Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + vectorToOtherPortal, Color.orange);
+            Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + _portalCameraRotation * Vector3.forward, Color.red);
+            Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + _portalCameraRotation * Vector3.up, Color.limeGreen);
             #endregion
             
-            _thisPortal.Camera.transform.rotation = _180Flip * portalRotationDifference * _playerCamera.transform.rotation;
         }
 
         private void ZoomInCamera()
         {
-            vertices = _thisPortal.Mesh.vertices;
+            vertices = _otherPortal.Mesh.vertices;
             Vector2[] portalPositionOnCamera = new Vector2[vertices.Length];
 
             for (int i = 0; i < vertices.Length; i++)
@@ -82,8 +89,12 @@ namespace GabStuff.Scripts
                 // therefore they will be at the world origin. The following set of multiplications moves the vertices
                 // to align with the game object
                 
-                vertices[i] = _180Flip * _thisPortal.Object.transform.rotation * vertices[i] * transform.localScale.x;
-                portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(_otherPortal.Object.transform.transform.position + vertices[i]);
+                vertices[i] = _otherPortal.Script.Flip180 * _otherPortal.Object.transform.rotation * vertices[i] * _otherPortal.Object.transform.localScale.x;
+                vertices[i] += _otherPortal.Object.transform.transform.position;
+                
+                Debug.DrawLine(Vector3.zero, vertices[i]);
+                
+                    portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(vertices[i]);
                         
                 portalPositionOnCamera[i] /= new Vector2(1600, 900);
             }

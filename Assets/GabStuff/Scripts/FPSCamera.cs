@@ -54,7 +54,7 @@ namespace GabStuff.Scripts
             {
                 _camera.fieldOfView = fieldOfView;
             }
-
+            
             var portals = PortalManager.Instance.GetPortals();
             if (!Mathf.Approximately(portals[0].Camera.fieldOfView, fieldOfView))
             {
@@ -76,7 +76,7 @@ namespace GabStuff.Scripts
                 cameraGameObject.transform.rotation.eulerAngles.z
             );
 
-            Vector3 playerDirectionVector = Quaternion.AngleAxis(playerDirection, Vector3.up) * Vector3.forward;
+            var playerDirectionVector = Quaternion.AngleAxis(playerDirection, Vector3.up) * Vector3.forward;
             Debug.DrawLine(transform.position, transform.position + playerDirectionVector, Color.black);
         }
 
