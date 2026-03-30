@@ -15,14 +15,19 @@ namespace GabStuff.Scripts
         [HideInInspector] public float playerDirection;
         private Vector2 _mouseInput;
         private Vector2 _smoothMouseInput;
-        private Camera _camera;
         private float _xRotation;
         private float _yRotation;
+        private Player _player;
         #endregion
+
+        private void Awake()
+        {
+            _player = new Player(gameObject, cameraVertical);
+            PlayerManager.Instance.SetPlayer(_player);
+        }
         
         private void Start()
         {
-            _camera = cameraGameObject.GetComponent<Camera>();
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -50,9 +55,9 @@ namespace GabStuff.Scripts
 
         private void UpdateFov()
         {
-            if (!Mathf.Approximately(_camera.fieldOfView, fieldOfView))
+            if (!Mathf.Approximately(_player.Camera.fieldOfView, fieldOfView))
             {
-                _camera.fieldOfView = fieldOfView;
+                _player.Camera.fieldOfView = fieldOfView;
             }
             
             var portals = PortalManager.Instance.GetPortals();
