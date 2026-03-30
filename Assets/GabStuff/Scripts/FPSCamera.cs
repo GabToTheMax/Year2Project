@@ -96,5 +96,10 @@ namespace GabStuff.Scripts
                 cameraGameObject.transform.rotation.eulerAngles.z
             );
         }
+
+        public void AddXRotation(float degrees)
+        {
+            _xRotation += degrees;
+        }
     }
 }

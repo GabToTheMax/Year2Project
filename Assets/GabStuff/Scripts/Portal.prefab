@@ -150,6 +150,8 @@ GameObject:
   - component: {fileID: 8864469708250100865}
   - component: {fileID: 9038452939446156063}
   - component: {fileID: 8821431216618633651}
+  - component: {fileID: 4804864839157022113}
+  - component: {fileID: 217481438566128674}
   m_Layer: 0
   m_Name: Portal
   m_TagString: Untagged
@@ -243,13 +245,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c73caf26cb120bc9f865a3b9befe5ed1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PortalScript
-  player: {fileID: 0}
-  debugRotationValue: 0
   portalMaterial: {fileID: 0}
   index: 0
   portalRotationDifference: {x: 0, y: 0, z: 0, w: 0}
   vertices: []
   vectorToPlayerCamera: {x: 0, y: 0, z: 0}
+  flip180: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &8821431216618633651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,6 +263,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa74705fcccc5221483027e8f3e31bf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PortalTeleportationScript
+--- !u!64 &4804864839157022113
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6980229789912125838}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -462981019419857548, guid: 152946e32cc6577419bd29809148b133, type: 3}
+--- !u!54 &217481438566128674
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6980229789912125838}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 1
 --- !u!1001 &3972999087391569434
 PrefabInstance:
   m_ObjectHideFlags: 0

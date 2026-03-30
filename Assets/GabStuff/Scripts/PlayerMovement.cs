@@ -55,6 +55,12 @@ namespace GabStuff.Scripts
             Debug.DrawLine(transform.position, transform.position + forwardVector, Color.red);
             _player.Rigidbody.AddForce(_smoothMove, ForceMode.VelocityChange);
         }
-        
+
+        public void Halt()
+        {
+            _smoothMove = Vector3.zero;
+            _moveDirection = Vector3.zero;
+            _player.Rigidbody.linearVelocity = Vector3.zero;
+        }
     }
 }

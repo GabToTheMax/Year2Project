@@ -19,7 +19,8 @@ namespace GabStuff.Scripts
         private Quaternion _portalCameraRotation;
         private Player _player;
         public Quaternion flip180;
-
+        public Portal ThisPortal => _thisPortal;
+        
         #endregion
     
         private void Awake()
