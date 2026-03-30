@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 3042933655083273057}
   - component: {fileID: 8864469708250100865}
   - component: {fileID: 9038452939446156063}
+  - component: {fileID: 8821431216618633651}
   m_Layer: 0
   m_Name: Portal
   m_TagString: Untagged
@@ -246,9 +247,21 @@ MonoBehaviour:
   debugRotationValue: 0
   portalMaterial: {fileID: 0}
   index: 0
-  vectorToPlayerCamera: {x: 0, y: 0, z: 0}
   portalRotationDifference: {x: 0, y: 0, z: 0, w: 0}
   vertices: []
+  vectorToPlayerCamera: {x: 0, y: 0, z: 0}
+--- !u!114 &8821431216618633651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6980229789912125838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa74705fcccc5221483027e8f3e31bf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalTeleportationScript
 --- !u!1001 &3972999087391569434
 PrefabInstance:
   m_ObjectHideFlags: 0
