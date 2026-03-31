@@ -49,7 +49,7 @@ namespace GabStuff.Scripts
             Debug.DrawLine(transform.position, transform.position + vectorToPlayerCamera, Color.green);
             
             vectorToPlayerCamera = flip180 * vectorToPlayerCamera;
-            Vector3 otherPortalPos = _otherPortal.Object.transform.position;
+            Vector3 otherPortalPos = _otherPortal.Position;
             
             // Quaternion black magic to account for rotated portals
             vectorToPlayerCamera = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation) * vectorToPlayerCamera;
@@ -64,7 +64,7 @@ namespace GabStuff.Scripts
             _thisPortal.Camera.transform.rotation = _portalCameraRotation;
             
             #region old rotation system
-            Vector3 vectorToOtherPortal = _otherPortal.Object.transform.position - _thisPortal.Camera.transform.position;
+            Vector3 vectorToOtherPortal = _otherPortal.Position - _thisPortal.Camera.transform.position;
             Vector3 upVector = flip180 * portalRotationDifference * _player.Object.transform.up;
             #endregion
             #region debug lines
@@ -88,9 +88,9 @@ namespace GabStuff.Scripts
                 // to align with the game object
                 
                 vertices[i] = _otherPortal.Script.flip180 * _otherPortal.Object.transform.rotation * vertices[i] * _otherPortal.Object.transform.localScale.x;
-                vertices[i] += _otherPortal.Object.transform.transform.position;
+                vertices[i] += _otherPortal.Position;
                 
-                Debug.DrawLine(Vector3.zero, vertices[i]);
+                //Debug.DrawLine(Vector3.zero, vertices[i]);
                 
                     portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(vertices[i]);
                         

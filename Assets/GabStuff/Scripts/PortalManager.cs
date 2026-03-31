@@ -16,6 +16,7 @@ namespace GabStuff.Scripts
         public readonly Material Material;
         public readonly Mesh Mesh;
         public readonly int Index;
+        public Vector3 Position => Object.transform.position;
 
         public Portal(GameObject o, Material m)
         {

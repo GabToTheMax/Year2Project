@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -55,12 +56,24 @@ namespace GabStuff.Scripts
             Debug.DrawLine(transform.position, transform.position + forwardVector, Color.red);
             _player.Rigidbody.AddForce(_smoothMove, ForceMode.VelocityChange);
         }
-
+        
+        /// <summary>
+        /// Stops player movement and kills momentum
+        /// </summary>
         public void Halt()
         {
             _smoothMove = Vector3.zero;
             _moveDirection = Vector3.zero;
             _player.Rigidbody.linearVelocity = Vector3.zero;
+        }
+
+        /// <summary>
+        /// Inverts the players momentum
+        /// </summary>
+        public void InvertMomentum()
+        {
+            _player.Rigidbody.linearVelocity = -_player.Rigidbody.linearVelocity;
+            _smoothMove = -_smoothMove;
         }
     }
 }

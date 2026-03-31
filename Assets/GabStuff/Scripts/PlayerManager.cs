@@ -10,6 +10,7 @@ namespace GabStuff.Scripts
         public readonly FPSCamera CameraScript;
         public readonly PlayerMovement MovementScript;
         public readonly Rigidbody Rigidbody;
+        public Vector3 Position => Object.transform.position;
 
         public Player(GameObject gameObject, GameObject cameraVertical)
         {
@@ -19,6 +20,7 @@ namespace GabStuff.Scripts
             CameraScript = gameObject.GetComponent<FPSCamera>();
             MovementScript = gameObject.GetComponent<PlayerMovement>();
             Rigidbody = gameObject.GetComponent<Rigidbody>();
+            
         }
     }
     
