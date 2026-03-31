@@ -6,7 +6,7 @@ namespace GabStuff.Scripts
     // DONE: Add portal getters and make the array private
     // TODO: Make the set Portal thing more robust (in case setPortal fails and I try get the other portal)
     // TODO: Make the PortalManager into a monoBehaviour and start itself, and gather the portals within itself.
-    // TODO: Make a PlayerManager and store player data in there.
+    // DONE: Make a PlayerManager and store player data in there.
     
     public class Portal
     {
@@ -16,6 +16,7 @@ namespace GabStuff.Scripts
         public readonly Material Material;
         public readonly Mesh Mesh;
         public readonly int Index;
+        public Vector3 Position => Object.transform.position;
 
         public Portal(GameObject o, Material m)
         {

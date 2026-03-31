@@ -9,37 +9,35 @@ namespace GabStuff.Scripts
         #region Variables
         
         // TODO FIX PERMISSIONS
-        [SerializeField] private GameObject player;
-        [SerializeField] private int debugRotationValue;
         [SerializeField] private Material portalMaterial;
         public int index;
-        private Portal _thisPortal;
-        private Portal _otherPortal;
-        private Camera _playerCamera;
-        private Quaternion _portalCameraRotation;
         public Quaternion portalRotationDifference;
         public Vector3[] vertices;
         public Vector3 vectorToPlayerCamera;
-        public Quaternion Flip180 { get; private set; }
-
+        private Portal _thisPortal;
+        private Portal _otherPortal;
+        private Quaternion _portalCameraRotation;
+        private Player _player;
+        public Quaternion flip180;
+        public Portal ThisPortal => _thisPortal;
+        
         #endregion
     
         private void Awake()
         {
             _thisPortal = new Portal(gameObject, portalMaterial);
             PortalManager.Instance.SetPortal(_thisPortal);
-            
-            _playerCamera = player.GetComponentInChildren<Camera>();
         }
 
         private void Start()
         {
+            _player = PlayerManager.Instance.GetPlayer();
             _otherPortal = PortalManager.Instance.GetPortal(_thisPortal);
         }
 
         private void Update()
         {
-            Flip180 = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up);
+            flip180 = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up);
             MoveCamera();
             RotateCamera();
             ZoomInCamera();
@@ -47,11 +45,11 @@ namespace GabStuff.Scripts
         
         private void MoveCamera()
         {
-            vectorToPlayerCamera = _playerCamera.transform.position - transform.position;
+            vectorToPlayerCamera = _player.Camera.transform.position - transform.position;
             Debug.DrawLine(transform.position, transform.position + vectorToPlayerCamera, Color.green);
             
-            vectorToPlayerCamera = Flip180 * vectorToPlayerCamera;
-            Vector3 otherPortalPos = _otherPortal.Object.transform.position;
+            vectorToPlayerCamera = flip180 * vectorToPlayerCamera;
+            Vector3 otherPortalPos = _otherPortal.Position;
             
             // Quaternion black magic to account for rotated portals
             vectorToPlayerCamera = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation) * vectorToPlayerCamera;
@@ -62,12 +60,12 @@ namespace GabStuff.Scripts
         private void RotateCamera()
         {
             portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
-            _portalCameraRotation = portalRotationDifference * (Flip180 * _playerCamera.transform.rotation);
+            _portalCameraRotation = portalRotationDifference * (flip180 * _player.Camera.transform.rotation);
             _thisPortal.Camera.transform.rotation = _portalCameraRotation;
             
             #region old rotation system
-            Vector3 vectorToOtherPortal = _otherPortal.Object.transform.position - _thisPortal.Camera.transform.position;
-            Vector3 upVector = Flip180 * portalRotationDifference * player.transform.up;
+            Vector3 vectorToOtherPortal = _otherPortal.Position - _thisPortal.Camera.transform.position;
+            Vector3 upVector = flip180 * portalRotationDifference * _player.Object.transform.up;
             #endregion
             #region debug lines
             //Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + upVector, Color.red);
@@ -89,10 +87,10 @@ namespace GabStuff.Scripts
                 // therefore they will be at the world origin. The following set of multiplications moves the vertices
                 // to align with the game object
                 
-                vertices[i] = _otherPortal.Script.Flip180 * _otherPortal.Object.transform.rotation * vertices[i] * _otherPortal.Object.transform.localScale.x;
-                vertices[i] += _otherPortal.Object.transform.transform.position;
+                vertices[i] = _otherPortal.Script.flip180 * _otherPortal.Object.transform.rotation * vertices[i] * _otherPortal.Object.transform.localScale.x;
+                vertices[i] += _otherPortal.Position;
                 
-                Debug.DrawLine(Vector3.zero, vertices[i]);
+                //Debug.DrawLine(Vector3.zero, vertices[i]);
                 
                     portalPositionOnCamera[i] = _thisPortal.Camera.WorldToScreenPoint(vertices[i]);
                         

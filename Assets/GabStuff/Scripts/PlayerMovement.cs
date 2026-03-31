@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,17 +13,15 @@ namespace GabStuff.Scripts
         #region Variables
         [SerializeField] private float moveRate;
         [SerializeField] private float sprintRate;
-        private Rigidbody _rb;
         private Vector3 _moveDirection;
         private Vector3 _smoothMove;
-        private FPSCamera _fpsCamera;
         private readonly Dictionary<string, float> _speedModifiers = new();
+        private Player _player;
         #endregion
 
         private void Start()
         {
-            _rb = GetComponent<Rigidbody>();
-            _fpsCamera = GetComponent<FPSCamera>();
+            _player = PlayerManager.Instance.GetPlayer();
             _speedModifiers.Add("Base", moveRate);
         }
 
@@ -48,15 +47,33 @@ namespace GabStuff.Scripts
     
         private void FixedUpdate()
         {
-            var forwardRotation = Quaternion.AngleAxis(_fpsCamera.playerDirection, Vector3.up);
+            var forwardRotation = Quaternion.AngleAxis(_player.CameraScript.playerDirection, Vector3.up);
             
             var forwardVector = forwardRotation * _moveDirection * _speedModifiers.Values.Sum();
             
             _smoothMove = Vector3.Lerp(_smoothMove, forwardVector, 0.1f);
             
             Debug.DrawLine(transform.position, transform.position + forwardVector, Color.red);
-            _rb.AddForce(_smoothMove, ForceMode.VelocityChange);
+            _player.Rigidbody.AddForce(_smoothMove, ForceMode.VelocityChange);
         }
         
+        /// <summary>
+        /// Stops player movement and kills momentum
+        /// </summary>
+        public void Halt()
+        {
+            _smoothMove = Vector3.zero;
+            _moveDirection = Vector3.zero;
+            _player.Rigidbody.linearVelocity = Vector3.zero;
+        }
+
+        /// <summary>
+        /// Inverts the players momentum
+        /// </summary>
+        public void InvertMomentum()
+        {
+            _player.Rigidbody.linearVelocity = -_player.Rigidbody.linearVelocity;
+            _smoothMove = -_smoothMove;
+        }
     }
 }

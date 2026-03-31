@@ -6,7 +6,6 @@ namespace GabStuff.Scripts
     public class FPSCamera : MonoBehaviour
     {
         #region Variables
-        [SerializeField] private GameObject cameraGameObject;
         [SerializeField] private GameObject cameraVertical;
         [SerializeField] private float cameraSensitivityX;
         [SerializeField] private float cameraSensitivityY;
@@ -15,14 +14,19 @@ namespace GabStuff.Scripts
         [HideInInspector] public float playerDirection;
         private Vector2 _mouseInput;
         private Vector2 _smoothMouseInput;
-        private Camera _camera;
         private float _xRotation;
         private float _yRotation;
+        private Player _player;
         #endregion
+
+        private void Awake()
+        {
+            _player = new Player(gameObject, cameraVertical);
+            PlayerManager.Instance.SetPlayer(_player);
+        }
         
         private void Start()
         {
-            _camera = cameraGameObject.GetComponent<Camera>();
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -50,9 +54,9 @@ namespace GabStuff.Scripts
 
         private void UpdateFov()
         {
-            if (!Mathf.Approximately(_camera.fieldOfView, fieldOfView))
+            if (!Mathf.Approximately(_player.Camera.fieldOfView, fieldOfView))
             {
-                _camera.fieldOfView = fieldOfView;
+                _player.Camera.fieldOfView = fieldOfView;
             }
             
             var portals = PortalManager.Instance.GetPortals();
@@ -69,11 +73,11 @@ namespace GabStuff.Scripts
         {
             _xRotation += _smoothMouseInput.x * cameraSensitivityX;
             playerDirection = _xRotation;
-            cameraGameObject.transform.rotation = Quaternion.Euler
+            _player.Camera.transform.rotation = Quaternion.Euler
             (
-                cameraGameObject.transform.rotation.eulerAngles.x,
+                _player.Camera.transform.rotation.eulerAngles.x,
                 _xRotation,
-                cameraGameObject.transform.rotation.eulerAngles.z
+                _player.Camera.transform.rotation.eulerAngles.z
             );
 
             var playerDirectionVector = Quaternion.AngleAxis(playerDirection, Vector3.up) * Vector3.forward;
@@ -84,12 +88,17 @@ namespace GabStuff.Scripts
         {
             _yRotation += -_smoothMouseInput.y * cameraSensitivityY;
             _yRotation = Mathf.Clamp(_yRotation, -90f, 90f);
-            cameraGameObject.transform.rotation = Quaternion.Euler
+            _player.Camera.transform.rotation = Quaternion.Euler
             (
                 _yRotation, 
-                cameraGameObject.transform.rotation.eulerAngles.y, 
-                cameraGameObject.transform.rotation.eulerAngles.z
+                _player.Camera.transform.rotation.eulerAngles.y, 
+                _player.Camera.transform.rotation.eulerAngles.z
             );
+        }
+
+        public void AddXRotation(float degrees)
+        {
+            _xRotation += degrees;
         }
     }
 }
