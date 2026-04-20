@@ -96,9 +96,15 @@ namespace GabStuff.Scripts
             );
         }
 
-        public void AddXRotation(float degrees)
+        public void AddXRotation(float angle)
         {
-            _xRotation += degrees;
+            _xRotation += angle;
+        }
+        
+        
+        public void AddYRotation(float angle)
+        {
+            _yRotation += angle;
         }
     }
 }

@@ -51,20 +51,30 @@ namespace GabStuff.Scripts
         private void OnTriggerStay(Collider collision)
         {
             if (!collision.CompareTag($"Player")) return;
+            
+            Quaternion portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
                 
             var sphereColliders = Physics.OverlapSphere(collision.transform.position, 0f);
             print(sphereColliders.Length);
             
             Vector3 portalToPlayer = _player.Position - _thisPortal.Position;
-            Vector3 otherPortalToPlayer = Quaternion.AngleAxis(180f, _thisPortal.Object.transform.up) * portalToPlayer;
+            Vector3 otherPortalToPlayer = Quaternion.AngleAxis(180f+portalRotationDifference.eulerAngles.y, _thisPortal.Object.transform.up) * portalToPlayer;
 
             _playerMirror.transform.position = _otherPortal.Position + otherPortalToPlayer;
+            print(portalRotationDifference.eulerAngles.z);
             
             if (sphereColliders.Contains(_portalCollider))
             {
                 print("Player in portal");
-                _player.MovementScript.InvertMomentum();
-                _player.CameraScript.AddXRotation(180f);
+                _player.MovementScript.RotateMomentum(Quaternion.AngleAxis(180f, Vector3.up) * portalRotationDifference);
+                
+                _player.CameraScript.AddXRotation(180f + portalRotationDifference.eulerAngles.y);
+
+                float verticalRotation = -portalRotationDifference.eulerAngles.z;
+                if(verticalRotation > 180)
+                    _player.CameraScript.AddYRotation(360-verticalRotation);
+                else
+                    _player.CameraScript.AddYRotation(verticalRotation);
                 
                 _player.Object.transform.position = _otherPortal.Position + otherPortalToPlayer;
             }
