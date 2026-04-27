@@ -1,33 +1,31 @@
-Shader "Basics/AlphaBlendedTransparency"
+Shader "Basics/AlphaCutout"
 {
     Properties
     {
         _BaseColor("Base Color", Color) = (1, 1, 1, 1)
         _BaseTexture("Base Texture", 2D) = "white" {}
-        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBLend("Source Blend Mode", Integer) = 5
-        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("Destination Blend Mode", Integer) = 10
+        _AlphaThreshold("Alpha Threshold", Range(0.0, 1.0)) = 0.5
     }
     SubShader
     {
         Tags
         {
             "RenderPipeline" = "UniversalPipeline"
-            "RenderType" = "Transparent"
-            "Queue" = "Transparent"
+            "RenderType" = "Opaque"
+            "Queue" = "AlphaTest"
         }
         
         Pass
         {
-            Blend [_SrcBLend] [_DstBlend]
-            
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             
             CBUFFER_START(UnityPerMaterial)
-            float4 _BaseColor;
-            float4 _BaseTexture_ST;
+                float4 _BaseColor;
+                float4 _BaseTexture_ST;
+                float _AlphaThreshold;
             CBUFFER_END
             
             TEXTURE2D(_BaseTexture);
@@ -57,8 +55,14 @@ Shader "Basics/AlphaBlendedTransparency"
             
             float4 frag(v2f i) : SV_TARGET
             {
-                float4 textureColor = SAMPLE_TEXTURE2D(_BaseTexture, sampler_BaseTexture, i.uv);
-                return textureColor * _BaseColor;
+                float4 outputColor = SAMPLE_TEXTURE2D(_BaseTexture, sampler_BaseTexture, i.uv);
+                
+                if (outputColor.a < _AlphaThreshold)
+                {
+                    discard;
+                }
+                
+                return outputColor * _BaseColor;
             }
             
             ENDHLSL

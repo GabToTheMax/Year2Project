@@ -1,25 +1,24 @@
-Shader "Basics/AlphaBlendedTransparency"
+Shader "Basics/TexturingWithDepth"
 {
     Properties
     {
         _BaseColor("Base Color", Color) = (1, 1, 1, 1)
         _BaseTexture("Base Texture", 2D) = "white" {}
-        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBLend("Source Blend Mode", Integer) = 5
-        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("Destination Blend Mode", Integer) = 10
     }
     SubShader
     {
         Tags
         {
             "RenderPipeline" = "UniversalPipeline"
-            "RenderType" = "Transparent"
-            "Queue" = "Transparent"
+            "RenderType" = "Opaque"
+            "Queue" = "Geometry"
         }
+        
+        ZWrite On
+        ZTest NotEqual
         
         Pass
         {
-            Blend [_SrcBLend] [_DstBlend]
-            
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
