@@ -4,6 +4,8 @@ Shader "Basics/AlphaBlendedTransparency"
     {
         _BaseColor("Base Color", Color) = (1, 1, 1, 1)
         _BaseTexture("Base Texture", 2D) = "white" {}
+        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBLend("Source Blend Mode", Integer) = 5
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("Destination Blend Mode", Integer) = 10
     }
     SubShader
     {
