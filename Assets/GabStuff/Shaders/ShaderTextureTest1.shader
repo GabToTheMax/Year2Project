@@ -21,9 +21,12 @@ Shader "Basics/ShaderTextureTest1"
             #pragma fragment frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             
+            CBUFFER_START(UnityPerMaterial)
             float4 _BaseColor;
-            TEXTURE2D(_BaseTexture);
             float4 _BaseTexture_ST;
+            CBUFFER_END
+            
+            TEXTURE2D(_BaseTexture);
             SAMPLER(sampler_BaseTexture);
             
             struct appdata
