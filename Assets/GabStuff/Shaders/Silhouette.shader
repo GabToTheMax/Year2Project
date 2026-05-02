@@ -14,8 +14,6 @@ Shader "Basics/Silhouette"
             "Queue" = "Transparent"
         }
         
-        ZWrite on
-        ZTest Less
         
         Pass
         {
@@ -56,8 +54,11 @@ Shader "Basics/Silhouette"
             {
                 float2 screenUV = i.positionSS.xy / i.positionSS.w;
                 float rawDepth = SampleSceneDepth(screenUV);
+                float silhouetteDepth = i.positionCS.z/i.positionCS.w;
                 
-                return lerp(_ForegroundColor, _BackgroundColor, rawDepth);
+                return lerp(_ForegroundColor, _BackgroundColor, sqrt(rawDepth));
+                
+                
             }
             
             ENDHLSL
