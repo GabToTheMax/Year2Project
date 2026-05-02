@@ -43,15 +43,15 @@ Shader "Basics2/Waves"
                 float2 uv : TEXCOORD0;
             };
             
-            struct v2f
+            struct t2f
             {
                 float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
             };
             
-            v2f vert(appdata v)
+            t2f vert(appdata v)
             {
-                v2f o = (v2f)0;
+                t2f o = (t2f)0;
                 
                 float3 positionWS = TransformObjectToWorld(v.positionOS.xyz);
                 
@@ -64,7 +64,7 @@ Shader "Basics2/Waves"
                 return o;
             }
             
-            float4 frag(v2f i) : SV_TARGET
+            float4 frag(t2f i) : SV_TARGET
             {
                 float4 textureColor = SAMPLE_TEXTURE2D(_BaseTexture, sampler_BaseTexture, i.uv);
                 return textureColor * _BaseColor;
