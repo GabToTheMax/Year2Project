@@ -54,7 +54,8 @@ namespace GabStuff.Scripts
             
             Quaternion portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
                 
-            var sphereColliders = Physics.OverlapSphere(collision.transform.position, 0f);
+            var sphereColliders = Physics.OverlapSphere(collision.transform.position, 0.3f);
+            
             print(sphereColliders.Length);
             
             Vector3 portalToPlayer = _player.Position - _thisPortal.Position;
