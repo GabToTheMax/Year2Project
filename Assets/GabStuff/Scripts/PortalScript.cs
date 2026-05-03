@@ -11,13 +11,15 @@ namespace GabStuff.Scripts
         // TODO FIX PERMISSIONS
         [SerializeField] private Material portalMaterial;
         public int index;
-        public Quaternion portalRotationDifference;
+        private Quaternion _portalRotationDifference;
+        public Quaternion PortalRotationDifference => _portalRotationDifference;
+        private Vector3 _vectorToPlayerCamera;
+        private Quaternion _flip180;
+        public Quaternion Flip180 => _flip180;
         private Quaternion _portalCameraRotation;
-        public Vector3 vectorToPlayerCamera;
         private Portal _thisPortal;
         private Portal _otherPortal;
         private Player _player;
-        public Quaternion flip180;
         
         public Portal ThisPortal => _thisPortal;
         
@@ -37,29 +39,29 @@ namespace GabStuff.Scripts
 
         private void Update()
         {
-            flip180 = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up);
+            _flip180 = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up);
             MoveCamera();
             RotateCamera();
         }
         
         private void MoveCamera()
         {
-            vectorToPlayerCamera = _player.Camera.transform.position - transform.position;
-            Debug.DrawLine(transform.position, transform.position + vectorToPlayerCamera, Color.green);
+            _vectorToPlayerCamera = _player.Camera.transform.position - transform.position;
+            Debug.DrawLine(transform.position, transform.position + _vectorToPlayerCamera, Color.green);
             
-            vectorToPlayerCamera = flip180 * vectorToPlayerCamera;
+            _vectorToPlayerCamera = _flip180 * _vectorToPlayerCamera;
             Vector3 otherPortalPos = _otherPortal.Position;
             
             // Quaternion black magic to account for rotated portals
-            vectorToPlayerCamera = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation) * vectorToPlayerCamera;
+            _vectorToPlayerCamera = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation) * _vectorToPlayerCamera;
             
-            _thisPortal.Camera.transform.position = otherPortalPos + vectorToPlayerCamera;
+            _thisPortal.Camera.transform.position = otherPortalPos + _vectorToPlayerCamera;
         }
 
         private void RotateCamera()
         {
-            portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
-            _portalCameraRotation = portalRotationDifference * (flip180 * _player.Camera.transform.rotation);
+            _portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
+            _portalCameraRotation = _portalRotationDifference * (_flip180 * _player.Camera.transform.rotation);
             _thisPortal.Camera.transform.rotation = _portalCameraRotation;
             
             #region debug lines

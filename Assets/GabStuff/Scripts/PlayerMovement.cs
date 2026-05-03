@@ -13,6 +13,7 @@ namespace GabStuff.Scripts
         #region Variables
         [SerializeField] private float moveRate;
         [SerializeField] private float sprintRate;
+        [SerializeField] private float distanceToTeleport;
         private Vector3 _moveDirection;
         private Vector3 _smoothMove;
         private readonly Dictionary<string, float> _speedModifiers = new();

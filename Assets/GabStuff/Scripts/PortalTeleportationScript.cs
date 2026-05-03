@@ -7,13 +7,14 @@ namespace GabStuff.Scripts
 {
     public class PortalTeleportationScript : MonoBehaviour
     {
+        #region variables
         private Player _player;
         private Portal _thisPortal;
         private Portal _otherPortal;
         private Collider _portalCollider;
         private GameObject _playerMirror;
-        [SerializeField] private float distanceToTeleport;
-    
+        #endregion
+        
         private void Start()
         {
             _thisPortal = GetComponent<PortalScript>().ThisPortal;
@@ -52,33 +53,36 @@ namespace GabStuff.Scripts
         {
             if (!collision.CompareTag($"Player")) return;
             
-            Quaternion portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
-                
-            var sphereColliders = Physics.OverlapSphere(collision.transform.position, 0.3f);
-            
-            print(sphereColliders.Length);
-            
+            Quaternion portalRotationDifference = _thisPortal.Script.PortalRotationDifference;
             Vector3 portalToPlayer = _player.Position - _thisPortal.Position;
-            Vector3 otherPortalToPlayer = Quaternion.AngleAxis(180f+portalRotationDifference.eulerAngles.y, _thisPortal.Object.transform.up) * portalToPlayer;
-
-            _playerMirror.transform.position = _otherPortal.Position + otherPortalToPlayer;
-            print(portalRotationDifference.eulerAngles.z);
+            Vector3 otherPortalToPlayer = portalRotationDifference*_thisPortal.Script.Flip180 * portalToPlayer;
+            float distanceToTeleport = 0f;
+                
+            Debug.DrawLine(_thisPortal.Position, _thisPortal.Position+portalToPlayer, Color.red);
+            Debug.DrawLine(_otherPortal.Position, _otherPortal.Position+otherPortalToPlayer, Color.red);
             
+            SetMirrorPosition(otherPortalToPlayer);
+            
+            var sphereColliders = Physics.OverlapSphere(collision.transform.position, distanceToTeleport);
             if (sphereColliders.Contains(_portalCollider))
             {
-                print("Player in portal");
-                _player.MovementScript.RotateMomentum(Quaternion.AngleAxis(180f, Vector3.up) * portalRotationDifference);
-                
-                _player.CameraScript.AddXRotation(180f + portalRotationDifference.eulerAngles.y);
-
-                float verticalRotation = -portalRotationDifference.eulerAngles.z;
-                if(verticalRotation > 180)
-                    _player.CameraScript.AddYRotation(360-verticalRotation);
-                else
-                    _player.CameraScript.AddYRotation(verticalRotation);
-                
-                _player.Object.transform.position = _otherPortal.Position + otherPortalToPlayer;
+                TeleportPlayer(portalRotationDifference, otherPortalToPlayer, distanceToTeleport);
             }
+        }
+
+        private void SetMirrorPosition(Vector3 otherPortalToPlayer)
+        {
+            _playerMirror.transform.position = _otherPortal.Position + otherPortalToPlayer;
+        }
+        
+        private void TeleportPlayer(Quaternion portalRotationDifference, Vector3 otherPortalToPlayer, float distanceToTeleport)
+        {
+            print("Player in portal");
+            _player.MovementScript.RotateMomentum(Quaternion.AngleAxis(180f, Vector3.up) * portalRotationDifference);
+            _player.CameraScript.AddXRotation(180f + portalRotationDifference.eulerAngles.y);
+
+            float verticalRotation = -portalRotationDifference.eulerAngles.z;
+            _player.Object.transform.position = _otherPortal.Position + otherPortalToPlayer + -_otherPortal.Object.transform.forward * 2 * distanceToTeleport;
         }
     }
 }
