@@ -1,4 +1,4 @@
-Shader "Basics/ShaderTextureTest1"
+Shader "Basics2/Portal"
 {
     Properties
     {
@@ -44,7 +44,7 @@ Shader "Basics/ShaderTextureTest1"
             struct v2f
             {
                 float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
+                float2 positionSS : TEXCOORD0;
             };
             
             v2f vert(appdata v)
@@ -52,14 +52,15 @@ Shader "Basics/ShaderTextureTest1"
                 v2f o = (v2f)0;
                 
                 o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
-                o.uv = TRANSFORM_TEX(v.uv, _BaseTexture);
+                o.positionSS = ComputeScreenPos(o.positionCS);
                 
                 return o;
             }
             
             float4 frag(v2f i) : SV_TARGET
             {
-                float4 textureColor = SAMPLE_TEXTURE2D(_BaseTexture, sampler_BaseTexture, i.uv);
+                // USE SCREEN SPACE COORDINATES INSTEAD OF UVS !!!
+                float4 textureColor = SAMPLE_TEXTURE2D(_BaseTexture, sampler_BaseTexture, i.positionSS.xy/i.positionCS.w);
                 return textureColor * _BaseColor;
             }
             

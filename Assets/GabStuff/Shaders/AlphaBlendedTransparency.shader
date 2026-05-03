@@ -39,15 +39,15 @@ Shader "Basics/AlphaBlendedTransparency"
                 float2 uv : TEXCOORD0;
             };
             
-            struct t2f
+            struct v2f
             {
                 float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
             };
             
-            t2f vert(appdata v)
+            v2f vert(appdata v)
             {
-                t2f o = (t2f)0;
+                v2f o = (v2f)0;
                 
                 o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
                 o.uv = TRANSFORM_TEX(v.uv, _BaseTexture);
@@ -55,7 +55,7 @@ Shader "Basics/AlphaBlendedTransparency"
                 return o;
             }
             
-            float4 frag(t2f i) : SV_TARGET
+            float4 frag(v2f i) : SV_TARGET
             {
                 float4 textureColor = SAMPLE_TEXTURE2D(_BaseTexture, sampler_BaseTexture, i.uv);
                 return textureColor * _BaseColor;

@@ -130,8 +130,8 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _TesselationAmount: 16.5
-    - _TesselationFadeEnd: 158.5
+    - _TesselationAmount: 14
+    - _TesselationFadeEnd: 97.63
     - _TesselationFadeStart: 5
     - _WaveHeight: 0.495
     - _WaveSpeed: 6.77

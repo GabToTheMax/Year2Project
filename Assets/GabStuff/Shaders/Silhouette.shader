@@ -34,15 +34,15 @@ Shader "Basics/Silhouette"
                 float4 positionOS : POSITION;
             };
             
-            struct t2f
+            struct v2f
             {
                 float4 positionCS : SV_POSITION;
                 float4 positionSS : TEXCOORD0;
             };
             
-            t2f vert(appdata v)
+            v2f vert(appdata v)
             {
-                t2f o = (t2f)0;
+                v2f o = (v2f)0;
                 
                 o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
                 o.positionSS = ComputeScreenPos(o.positionCS);
@@ -50,7 +50,7 @@ Shader "Basics/Silhouette"
                 return o;
             }
             
-            float4 frag(t2f i) : SV_TARGET
+            float4 frag(v2f i) : SV_TARGET
             {
                 float2 screenUV = i.positionSS.xy / i.positionSS.w;
                 float rawDepth = SampleSceneDepth(screenUV);
