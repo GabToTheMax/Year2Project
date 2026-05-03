@@ -29,7 +29,8 @@ namespace GabStuff.Scripts
         {
             if (!collision.CompareTag($"Player")) return;
                 
-            var sphereColliders = Physics.OverlapSphere(collision.transform.position, 0f);
+            var sphereColliders = Physics.OverlapSphere(collision.transform.position, 0.3f);
+            
             print(sphereColliders.Length);
             
             if (sphereColliders.Contains(_portalCollider))
@@ -42,12 +43,6 @@ namespace GabStuff.Scripts
                 Vector3 otherPortalToPlayer = Quaternion.AngleAxis(180f, _thisPortal.Object.transform.up) * portalToPlayer;
                 _player.Object.transform.position = _otherPortal.Position + otherPortalToPlayer;
             }
-                
-                
-            // _player.MovementScript.Halt();
-            // _player.CameraScript.AddXRotation(180f);
-            // Vector3 portalToPlayer = _player.Object.transform.position - _thisPortal.Object.transform.position;
-            // Vector3 otherPortalToPlayer = Quaternion.AngleAxis(180f, _thisPortal.Object.transform.up) * portalToPlayer;
         }
     }
 }
