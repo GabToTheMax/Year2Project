@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace GabStuff.Scripts
@@ -8,8 +9,8 @@ namespace GabStuff.Scripts
     {
         #region Variables
         
-        // TODO FIX PERMISSIONS
         [SerializeField] private Material portalMaterial;
+        [SerializeField] private Material debugMaterial;
         public int index;
         private Quaternion _portalRotationDifference;
         public Quaternion PortalRotationDifference => _portalRotationDifference;
