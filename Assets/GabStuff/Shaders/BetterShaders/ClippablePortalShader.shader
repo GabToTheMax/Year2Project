@@ -30,6 +30,10 @@ Shader "Basics2/ClippablePortalShader"
             CBUFFER_START(UnityPerMaterial)
             float4 _BaseColor;
             float4 _BaseTexture_ST;
+            vector _Portal1PlaneNormal;
+            vector _Portal1PlanePoint;
+            vector _Portal2PlaneNormal;
+            vector _Portal2PlanePoint;
             CBUFFER_END
             
             uniform float _CurrentCameraRendering;
@@ -59,12 +63,45 @@ Shader "Basics2/ClippablePortalShader"
                 return o;
             }
             
+            // from: https://discussions.unity.com/t/converting-a-clip-space-point-to-world-space/930106/2
+            float3 ClipToWorldPos(float4 clipPos)
+            {
+                #ifdef UNITY_REVERSED_Z
+                    // unity_CameraInvProjection always in OpenGL matrix form
+                    // that doesn't match the current view matrix used to calculate the clip space
+
+                    // transform clip space into normalized device coordinates
+                    float3 ndc = clipPos.xyz / clipPos.w;
+
+                    // convert ndc's depth from 1.0 near to 0.0 far to OpenGL style -1.0 near to 1.0 far 
+                    ndc = float3(ndc.x, ndc.y * _ProjectionParams.x, (1.0 - ndc.z) * 2.0 - 1.0);
+
+                    // transform back into clip space and apply inverse projection matrix
+                    float3 viewPos =  mul(unity_CameraInvProjection, float4(ndc * clipPos.w, clipPos.w));
+                #else
+                    // using OpenGL, unity_CameraInvProjection matches view matrix
+                    float3 viewPos = mul(unity_CameraInvProjection, clipPos);
+                #endif
+
+                    // transform from view to world space
+                    return mul(unity_MatrixInvV, float4(viewPos, 1.0)).xyz;
+            }
+            
             float4 frag(v2f i) : SV_TARGET
             {
-                if ( _CurrentCameraRendering == 2)
+                float3 WorldPos = ClipToWorldPos(i.positionCS);
+                
+                if ( _CurrentCameraRendering == 1 )
                 {
-                    discard;
+                    if (dot(_Portal1PlaneNormal, WorldPos-_Portal1PlanePoint) > 0)
+                        discard;
                 }
+                else if ( _CurrentCameraRendering == 2 )
+                {
+                    if (dot(_Portal2PlaneNormal, WorldPos-_Portal2PlanePoint) > 0)
+                        discard;
+                }
+                
                 float4 textureColor = SAMPLE_TEXTURE2D(_BaseTexture, sampler_BaseTexture, i.uv);
                 return textureColor * _BaseColor;
             }
@@ -72,6 +109,7 @@ Shader "Basics2/ClippablePortalShader"
             ENDHLSL
         }
 
+/*
         // Depth pass
         Pass
         {
@@ -82,7 +120,6 @@ Shader "Basics2/ClippablePortalShader"
             
             ZWrite On
             ColorMask R
-            
             HLSLPROGRAM
             
             #pragma vertex depthOnlyVert
@@ -166,5 +203,6 @@ Shader "Basics2/ClippablePortalShader"
             
             ENDHLSL
         }
+*/
     }
 }

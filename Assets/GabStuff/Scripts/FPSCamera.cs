@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 namespace GabStuff.Scripts
 {
@@ -23,15 +25,21 @@ namespace GabStuff.Scripts
         {
             _player = new Player(gameObject, cameraVertical);
             PlayerManager.Instance.SetPlayer(_player);
-            Camera.onPreRender += OnPreRenderCamera;
+            RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
         }
         
         private void Start()
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
+            Shader.SetGlobalFloat("_CurrentCameraRendering", 67.0f);
         }
-        
+
+        private void OnApplicationQuit()
+        {
+            RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+        }
+
         public void OnCameraMove(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -108,15 +116,19 @@ namespace GabStuff.Scripts
             _yRotation += angle;
         }
 
-        private void OnPreRenderCamera(Camera cam)
+        private void OnBeginCameraRendering(ScriptableRenderContext context, Camera cam)
         {
-            if (cam == _player.Camera)
+            if (cam == PortalManager.Instance.GetPortals()[0].Camera)
             {
-                Shader.SetGlobalFloat("_CurrentCameraRendering", 0.0f);
+                Shader.SetGlobalFloat("_CurrentCameraRendering", 1.0f);
+            }
+            else if (cam == PortalManager.Instance.GetPortals()[1].Camera)
+            {
+                Shader.SetGlobalFloat("_CurrentCameraRendering", 2.0f);
             }
             else
             {
-                Shader.SetGlobalFloat("_CurrentCameraRendering", 2.0f);
+                Shader.SetGlobalFloat("_CurrentCameraRendering", 1.0f);
             }
         }
     }

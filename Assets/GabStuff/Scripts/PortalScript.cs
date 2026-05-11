@@ -77,8 +77,8 @@ namespace GabStuff.Scripts
         {
             var normalToPlane = _otherPortal.Object.transform.forward;
             var pointOnPlane = _otherPortal.Object.transform.position;
-            //clippingPlaneMaterial.SetVector("OtherPortalPlane", new Vector4(normalToPlane.x, normalToPlane.y, normalToPlane.z, 0));
-            //clippingPlaneMaterial.SetVector("OtherPortalPoint", new Vector4(pointOnPlane.x, pointOnPlane.y, pointOnPlane.z, 0));
+            Shader.SetGlobalVector($"_Portal{_thisPortal.Index+1}PlaneNormal", new Vector4(normalToPlane.x, normalToPlane.y, normalToPlane.z, 0));
+            Shader.SetGlobalVector($"_Portal{_thisPortal.Index+1}PlanePoint", new Vector4(pointOnPlane.x, pointOnPlane.y, pointOnPlane.z, 0));
         }
     }
 }
