@@ -73,11 +73,11 @@ namespace GabStuff.Scripts
         {
             _xRotation += _smoothMouseInput.x * cameraSensitivityX;
             playerDirection = _xRotation;
-            _player.Camera.transform.rotation = Quaternion.Euler
+            _player.Object.transform.rotation = Quaternion.Euler
             (
-                _player.Camera.transform.rotation.eulerAngles.x,
+                _player.Object.transform.rotation.eulerAngles.x,
                 _xRotation,
-                _player.Camera.transform.rotation.eulerAngles.z
+                _player.Object.transform.rotation.eulerAngles.z
             );
 
             var playerDirectionVector = Quaternion.AngleAxis(playerDirection, Vector3.up) * Vector3.forward;
@@ -88,17 +88,23 @@ namespace GabStuff.Scripts
         {
             _yRotation += -_smoothMouseInput.y * cameraSensitivityY;
             _yRotation = Mathf.Clamp(_yRotation, -90f, 90f);
-            _player.Camera.transform.rotation = Quaternion.Euler
+            cameraVertical.transform.rotation = Quaternion.Euler
             (
                 _yRotation, 
-                _player.Camera.transform.rotation.eulerAngles.y, 
-                _player.Camera.transform.rotation.eulerAngles.z
+                cameraVertical.transform.rotation.eulerAngles.y, 
+                cameraVertical.transform.rotation.eulerAngles.z
             );
         }
 
-        public void AddXRotation(float degrees)
+        public void AddXRotation(float angle)
         {
-            _xRotation += degrees;
+            _xRotation += angle;
+        }
+        
+        
+        public void AddYRotation(float angle)
+        {
+            _yRotation += angle;
         }
     }
 }

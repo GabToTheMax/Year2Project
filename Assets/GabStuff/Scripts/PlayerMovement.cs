@@ -13,6 +13,7 @@ namespace GabStuff.Scripts
         #region Variables
         [SerializeField] private float moveRate;
         [SerializeField] private float sprintRate;
+        [SerializeField] private float distanceToTeleport;
         private Vector3 _moveDirection;
         private Vector3 _smoothMove;
         private readonly Dictionary<string, float> _speedModifiers = new();
@@ -70,10 +71,10 @@ namespace GabStuff.Scripts
         /// <summary>
         /// Inverts the players momentum
         /// </summary>
-        public void InvertMomentum()
+        public void RotateMomentum(Quaternion rotation)
         {
-            _player.Rigidbody.linearVelocity = -_player.Rigidbody.linearVelocity;
-            _smoothMove = -_smoothMove;
+            _player.Rigidbody.linearVelocity = rotation * _player.Rigidbody.linearVelocity;
+            _smoothMove = rotation * _smoothMove;
         }
     }
 }
