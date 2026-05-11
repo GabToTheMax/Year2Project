@@ -23,6 +23,7 @@ namespace GabStuff.Scripts
         {
             _player = new Player(gameObject, cameraVertical);
             PlayerManager.Instance.SetPlayer(_player);
+            Camera.onPreRender += OnPreRenderCamera;
         }
         
         private void Start()
@@ -105,6 +106,18 @@ namespace GabStuff.Scripts
         public void AddYRotation(float angle)
         {
             _yRotation += angle;
+        }
+
+        private void OnPreRenderCamera(Camera cam)
+        {
+            if (cam == _player.Camera)
+            {
+                Shader.SetGlobalFloat("_CurrentCameraRendering", 0.0f);
+            }
+            else
+            {
+                Shader.SetGlobalFloat("_CurrentCameraRendering", 2.0f);
+            }
         }
     }
 }
