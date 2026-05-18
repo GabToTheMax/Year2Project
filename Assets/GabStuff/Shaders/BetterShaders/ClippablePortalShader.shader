@@ -78,7 +78,11 @@ Shader "Basics2/ClippablePortalShader"
 
                 float3 worldPos = ComputeWorldSpacePosition(UV, depth, UNITY_MATRIX_I_VP);
                 
-                if ( _CurrentCameraRendering == 1 )
+                if  (depth == -1)
+                {
+                    discard;
+                }
+                else if ( _CurrentCameraRendering == 1 )
                 {
                     if (dot(_Portal1PlaneNormal ,worldPos-_Portal1PlanePoint) > 0)
                     {
@@ -160,6 +164,13 @@ Shader "Basics2/ClippablePortalShader"
             #pragma fragment depthNormalsFrag
             
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
+            
+            vector _Portal1PlaneNormal;
+            vector _Portal1PlanePoint;
+            vector _Portal2PlaneNormal;
+            vector _Portal2PlanePoint;
+            uniform float _CurrentCameraRendering;
 
             struct appdata
             {
@@ -186,8 +197,33 @@ Shader "Basics2/ClippablePortalShader"
             
             float depthNormalsFrag(v2f i) : SV_TARGET
             {
-                float3 normalsWS = NormalizeNormalPerPixel(i.normalWS);
+                float2 UV = i.positionCS.xy / _ScaledScreenParams.xy;
                 
+                #if UNITY_REVERSED_Z
+                    real depth = SampleSceneDepth(UV);
+                #else
+                    // Adjust z to match NDC for OpenGL
+                    real depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, SampleSceneDepth(UV));
+                #endif
+
+                float3 worldPos = ComputeWorldSpacePosition(UV, depth, UNITY_MATRIX_I_VP);
+                
+                if ( _CurrentCameraRendering == 1 )
+                {
+                    if (dot(_Portal1PlaneNormal ,worldPos-_Portal1PlanePoint) > 0)
+                    {
+                        return -1;
+                    }
+                }
+                else if ( _CurrentCameraRendering == 2 )
+                {
+                    if (dot(_Portal2PlaneNormal ,worldPos-_Portal2PlanePoint) > 0)
+                    {
+                        return -1;
+                    }
+                }
+                
+                float3 normalsWS = NormalizeNormalPerPixel(i.normalWS);
                 return float4(normalsWS, 0.0f);
             }
             
