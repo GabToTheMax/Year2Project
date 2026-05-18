@@ -121,14 +121,17 @@ namespace GabStuff.Scripts
             if (cam == PortalManager.Instance.GetPortals()[0].Camera)
             {
                 Shader.SetGlobalFloat("_CurrentCameraRendering", 1.0f);
+                //print("A");
             }
             else if (cam == PortalManager.Instance.GetPortals()[1].Camera)
             {
                 Shader.SetGlobalFloat("_CurrentCameraRendering", 2.0f);
+                //print("B");
             }
             else
             {
                 Shader.SetGlobalFloat("_CurrentCameraRendering", 0f);
+                //print("C");
             }
         }
     }

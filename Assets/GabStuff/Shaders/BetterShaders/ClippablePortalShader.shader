@@ -76,31 +76,30 @@ Shader "Basics2/ClippablePortalShader"
                     real depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, SampleSceneDepth(UV));
                 #endif
 
-                float3 WorldPos = ComputeWorldSpacePosition(UV, depth, UNITY_MATRIX_I_VP);
+                float3 worldPos = ComputeWorldSpacePosition(UV, depth, UNITY_MATRIX_I_VP);
                 
-                if (WorldPos.x > 0)
-                    discard;
-                
-                /*if ( _CurrentCameraRendering == 1 )
+                if ( _CurrentCameraRendering == 1 )
                 {
-                    //if (dot(_Portal1PlaneNormal, WorldPos-_Portal1PlanePoint) > 0)
-
+                    if (dot(_Portal1PlaneNormal ,worldPos-_Portal1PlanePoint) > 0)
+                    {
+                        discard;
+                    }
                 }
                 else if ( _CurrentCameraRendering == 2 )
                 {
-                    //if (dot(_Portal2PlaneNormal, WorldPos-_Portal2PlanePoint) > 0)
-
-                }*/
-                
+                    if (dot(_Portal2PlaneNormal ,worldPos-_Portal2PlanePoint) > 0)
+                    {
+                        discard;
+                    }
+                }
                 float4 textureColor = SAMPLE_TEXTURE2D(_BaseTexture, sampler_BaseTexture, i.uv);
                 return textureColor * _BaseColor;
-                
             }
             
             ENDHLSL
         }
 
-/*
+
         // Depth pass
         Pass
         {
@@ -194,6 +193,5 @@ Shader "Basics2/ClippablePortalShader"
             
             ENDHLSL
         }
-*/
     }
 }
