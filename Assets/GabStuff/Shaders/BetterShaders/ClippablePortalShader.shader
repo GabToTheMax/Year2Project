@@ -26,6 +26,8 @@ Shader "Basics2/ClippablePortalShader"
             #pragma vertex vert
             #pragma fragment frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            // depth texture library
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
             
             CBUFFER_START(UnityPerMaterial)
             float4 _BaseColor;
@@ -63,47 +65,36 @@ Shader "Basics2/ClippablePortalShader"
                 return o;
             }
             
-            // from: https://discussions.unity.com/t/converting-a-clip-space-point-to-world-space/930106/2
-            float3 ClipToWorldPos(float4 clipPos)
-            {
-                #ifdef UNITY_REVERSED_Z
-                    // unity_CameraInvProjection always in OpenGL matrix form
-                    // that doesn't match the current view matrix used to calculate the clip space
-
-                    // transform clip space into normalized device coordinates
-                    float3 ndc = clipPos.xyz / clipPos.w;
-
-                    // convert ndc's depth from 1.0 near to 0.0 far to OpenGL style -1.0 near to 1.0 far 
-                    ndc = float3(ndc.x, ndc.y * _ProjectionParams.x, (1.0 - ndc.z) * 2.0 - 1.0);
-
-                    // transform back into clip space and apply inverse projection matrix
-                    float3 viewPos =  mul(unity_CameraInvProjection, float4(ndc * clipPos.w, clipPos.w));
-                #else
-                    // using OpenGL, unity_CameraInvProjection matches view matrix
-                    float3 viewPos = mul(unity_CameraInvProjection, clipPos);
-                #endif
-
-                    // transform from view to world space
-                    return mul(unity_MatrixInvV, float4(viewPos, 1.0)).xyz;
-            }
-            
             float4 frag(v2f i) : SV_TARGET
             {
-                float3 WorldPos = ClipToWorldPos(i.positionCS);
+                float2 UV = i.positionCS.xy / _ScaledScreenParams.xy;
                 
-                if ( _CurrentCameraRendering == 1 )
+                #if UNITY_REVERSED_Z
+                    real depth = SampleSceneDepth(UV);
+                #else
+                    // Adjust z to match NDC for OpenGL
+                    real depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, SampleSceneDepth(UV));
+                #endif
+
+                float3 WorldPos = ComputeWorldSpacePosition(UV, depth, UNITY_MATRIX_I_VP);
+                
+                if (WorldPos.x > 0)
+                    discard;
+                
+                /*if ( _CurrentCameraRendering == 1 )
                 {
-                    if (dot(_Portal1PlaneNormal, WorldPos-_Portal1PlanePoint) > 0)
-                        discard;
+                    //if (dot(_Portal1PlaneNormal, WorldPos-_Portal1PlanePoint) > 0)
+
                 }
                 else if ( _CurrentCameraRendering == 2 )
                 {
-                    if (dot(_Portal2PlaneNormal, WorldPos-_Portal2PlanePoint) > 0)
-                        discard;
-                }
+                    //if (dot(_Portal2PlaneNormal, WorldPos-_Portal2PlanePoint) > 0)
+
+                }*/
                 
                 float4 textureColor = SAMPLE_TEXTURE2D(_BaseTexture, sampler_BaseTexture, i.uv);
                 return textureColor * _BaseColor;
+                
             }
             
             ENDHLSL

@@ -128,7 +128,7 @@ namespace GabStuff.Scripts
             }
             else
             {
-                Shader.SetGlobalFloat("_CurrentCameraRendering", 1.0f);
+                Shader.SetGlobalFloat("_CurrentCameraRendering", 0f);
             }
         }
     }
