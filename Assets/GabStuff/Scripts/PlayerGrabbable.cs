@@ -4,8 +4,6 @@ namespace GabStuff.Scripts
 {
     public class PlayerGrabbable : MonoBehaviour
     {
-    
-    
         void Start()
         {
         

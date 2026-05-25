@@ -17,7 +17,9 @@ namespace GabStuff.Scripts
         private Vector2 _mouseInput;
         private Vector2 _smoothMouseInput;
         private float _xRotation;
+        public float XRotation => _xRotation;
         private float _yRotation;
+        public float YRotation => _yRotation;
         private Player _player;
         #endregion
 
@@ -110,12 +112,11 @@ namespace GabStuff.Scripts
             _xRotation += angle;
         }
         
-        
         public void AddYRotation(float angle)
         {
             _yRotation += angle;
         }
-
+        
         private void OnBeginCameraRendering(ScriptableRenderContext context, Camera cam)
         {
             if (cam == PortalManager.Instance.GetPortals()[0].Camera)
