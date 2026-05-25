@@ -52,6 +52,7 @@ Shader "Basics2/ClippablePortalShader"
             struct v2f
             {
                 float4 positionCS : SV_POSITION;
+                float3 positionWS : TEXCOORD1;
                 float2 uv : TEXCOORD0;
             };
             
@@ -60,6 +61,7 @@ Shader "Basics2/ClippablePortalShader"
                 v2f o = (v2f)0;
                 
                 o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
+                o.positionWS = TransformObjectToWorld(v.positionOS.xyz);
                 o.uv = TRANSFORM_TEX(v.uv, _BaseTexture);
                 
                 return o;
@@ -67,22 +69,9 @@ Shader "Basics2/ClippablePortalShader"
             
             float4 frag(v2f i) : SV_TARGET
             {
-                float2 UV = i.positionCS.xy / _ScaledScreenParams.xy;
+                float3 worldPos = i.positionWS;
                 
-                #if UNITY_REVERSED_Z
-                    real depth = SampleSceneDepth(UV);
-                #else
-                    // Adjust z to match NDC for OpenGL
-                    real depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, SampleSceneDepth(UV));
-                #endif
-
-                float3 worldPos = ComputeWorldSpacePosition(UV, depth, UNITY_MATRIX_I_VP);
-                
-                if  (depth == -1)
-                {
-                    discard;
-                }
-                else if ( _CurrentCameraRendering == 1 )
+                if ( _CurrentCameraRendering == 1 )
                 {
                     if (dot(_Portal1PlaneNormal ,worldPos-_Portal1PlanePoint) > 0)
                     {
