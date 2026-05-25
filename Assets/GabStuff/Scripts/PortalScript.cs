@@ -10,7 +10,6 @@ namespace GabStuff.Scripts
         #region Variables
         
         [SerializeField] private Material portalMaterial;
-        [SerializeField] private Material debugMaterial;
         public int index;
         private Quaternion _portalRotationDifference;
         public Quaternion PortalRotationDifference => _portalRotationDifference;
@@ -43,6 +42,7 @@ namespace GabStuff.Scripts
             _flip180 = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up);
             MoveCamera();
             RotateCamera();
+            SetClippingPlane();
         }
         
         private void MoveCamera()
@@ -71,6 +71,14 @@ namespace GabStuff.Scripts
             Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + _portalCameraRotation * Vector3.forward, Color.red);
             Debug.DrawLine(_thisPortal.Camera.transform.position, _thisPortal.Camera.transform.position + _portalCameraRotation * Vector3.up, Color.limeGreen);
             #endregion
+        }
+
+        private void SetClippingPlane()
+        {
+            var normalToPlane = _otherPortal.Object.transform.forward;
+            var pointOnPlane = _otherPortal.Object.transform.position;
+            Shader.SetGlobalVector($"_Portal{_thisPortal.Index+1}PlaneNormal", new Vector4(normalToPlane.x, normalToPlane.y, normalToPlane.z, 0));
+            Shader.SetGlobalVector($"_Portal{_thisPortal.Index+1}PlanePoint", new Vector4(pointOnPlane.x, pointOnPlane.y, pointOnPlane.z, 0));
         }
     }
 }
