@@ -10,6 +10,7 @@ namespace GabStuff.Scripts
         private Player _thisPlayer;
         private bool _currentlyGrabbing;
         private GameObject _grabbedObject;
+        private PlayerGrabbable _grabbedObjectScript;
         private Vector3 _facingVector;
 
         private void Start()
@@ -20,17 +21,23 @@ namespace GabStuff.Scripts
         public void OnGrab(InputAction.CallbackContext ctx)
         {
             if(!ctx.performed) return;
-         
-            _currentlyGrabbing = false;
-            _grabbedObject = null;
+
+            if (_currentlyGrabbing)
+            {
+                _currentlyGrabbing = false;
+                _grabbedObject = null;
+                return;
+            }
             
             if (!Physics.Raycast(_thisPlayer.Camera.transform.position, _facingVector, out RaycastHit hit, reach)) return;
+            
             GameObject hitObject = hit.transform.gameObject;
             
             if (hitObject.GetComponent<PlayerGrabbable>() != null)
             {
                 _currentlyGrabbing = true;
                 _grabbedObject = hitObject;
+                _grabbedObjectScript = hitObject.GetComponent<PlayerGrabbable>();
             }
         }
         
@@ -46,38 +53,28 @@ namespace GabStuff.Scripts
         {
             if (!_currentlyGrabbing) return; 
 
-            RaycastHit[] hits = Physics.RaycastAll(_thisPlayer.Camera.transform.position, _facingVector, reach);
+            RaycastHit[] hits = Physics.SphereCastAll(_thisPlayer.Camera.transform.position, _grabbedObjectScript.GetRadius(), _facingVector, reach);
             
-            var objectInTheWay = false;
-            foreach (RaycastHit hit in hits)
-            {
-                if (hit.transform.gameObject == _grabbedObject) continue;
-                objectInTheWay = true;
-                _grabbedObject.transform.position = hit.point;
-                break;
-            }
-
-            print("It reached this code");
-            if (!objectInTheWay)
+            if(hits.Length == 0)
             {
                 print("It is trying to move the grabbed object to the floating position");
                 _grabbedObject.transform.position = _thisPlayer.Camera.transform.position + _facingVector * reach;
             }
 
-            /*
-            if (_currentlyGrabbing)
+            int closestIndex = 0;
+            float closestDistance = 0;
+            for (var i = 0; i < hits.Length; i++)
             {
-                RaycastHit hit;
-                if(!Physics.Raycast(_thisPlayer.Camera.transform.position, _facingVector, out hit, reach)) return;
-                if (hit.transform.gameObject == _grabbedObject)
+                var hit = hits[i];
+                if (hit.transform.gameObject == _grabbedObject) continue;
+                if (hit.distance < closestDistance)
                 {
-                    _grabbedObject.transform.position = _thisPlayer.Camera.transform.position + _facingVector * reach;
+                    closestDistance = hit.distance;
+                    closestIndex = i;
                 }
-                else
-                {
-                    _grabbedObject.transform.position = hit.point;
-                }
-            }*/
+            }
+            
+            _grabbedObject.transform.position = hits[closestIndex].point + hits[closestIndex].normal * _grabbedObjectScript.GetRadius();
         }
     }
 }
