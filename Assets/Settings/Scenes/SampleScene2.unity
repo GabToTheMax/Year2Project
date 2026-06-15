@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 40696117}
   - component: {fileID: 40696125}
   - component: {fileID: 40696126}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -406,6 +406,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGrabber
   reach: 5
+  playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
+  grabbedObjectLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &46157005
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,7 +421,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 46157006}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CameraRotator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -483,7 +489,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -1287,7 +1293,7 @@ GameObject:
   - component: {fileID: 771604386}
   - component: {fileID: 771604385}
   - component: {fileID: 771604384}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
