@@ -7,6 +7,8 @@ namespace GabStuff.Scripts
 {
     public class PortalTeleportationScript : MonoBehaviour
     {
+        //TODO Figure out why the player copy looks wierd
+        
         #region variables
         private Player _player;
         private Portal _thisPortal;
