@@ -406,14 +406,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGrabber
   reach: 3
+  forceStrength: 3
+  waitTimeBeforeDropOutOfRange: 0.3
+  moveCompensation: 0.2
+  linearDampingStrength: 20
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256
-  grabbedObjectLayerMask:
-    serializedVersion: 2
-    m_Bits: 0
-  forceStrength: 3
-  linearDampingStrength: 20
   playerLayer: 8
   grabbedObjectLayer: 7
 --- !u!1 &46157005
@@ -490,7 +489,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 156153383}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 10
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -3299,6 +3298,8 @@ GameObject:
   - component: {fileID: 1641279237}
   - component: {fileID: 1641279236}
   - component: {fileID: 1641279235}
+  - component: {fileID: 1641279240}
+  - component: {fileID: 1641279239}
   m_Layer: 0
   m_Name: Sphere (2)
   m_TagString: Untagged
@@ -3399,6 +3400,46 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1641279239
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1641279234}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1641279240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1641279234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48c8bfb8b3e60c5448879324feac441e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GabStuff.Scripts.PlayerGrabbable
+  radius: 1
 --- !u!1 &1668540485
 GameObject:
   m_ObjectHideFlags: 0

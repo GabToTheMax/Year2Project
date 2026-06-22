@@ -6,42 +6,35 @@ using UnityEngine.Rendering;
 
 namespace GabStuff.Scripts
 {
-    public class GrabbedObject
-    {
-        public GameObject Object;
-        public PlayerGrabbable Script;
-        public Rigidbody Rigidbody;
-        public Vector3 Position => Object.transform.position;
-        
-        public GrabbedObject(GameObject g, PlayerGrabbable s, Rigidbody r)
-        {
-            Object = g;
-            Script = s;
-            Rigidbody = r;
-        }
-
-    }
     
     public class PlayerGrabber : MonoBehaviour
     {
+        #region variables
         
+        [Header("Grabber settings")]
         [SerializeField] private float reach;
-        [SerializeField] private LayerMask playerLayerMask;
-        [SerializeField] private LayerMask grabbedObjectLayerMask;
         [SerializeField] private float forceStrength;
+        [SerializeField] private float waitTimeBeforeDropOutOfRange;
+        
+        [Header("Grabbed object settings")]
+        [SerializeField] private float moveCompensation;
         [SerializeField] private float linearDampingStrength;
+        
+        [Header("Layers")]
+        [SerializeField] private LayerMask playerLayerMask;
         [SerializeField] private int playerLayer;
         [SerializeField] private int grabbedObjectLayer;
+        
         private Player _thisPlayer;
         private bool _currentlyGrabbing;
         private GrabbedObject _grabbedObject;
         private Vector3 _facingVector;
         private Vector3 _grabbedTarget;
+        private bool _isGrabbedObjectInFront;
+        private bool _isFirstTime;
+        private float _startTime;
         
-        private bool isGrabbedObjectInFront;
-        private bool isFirstTime;
-        private float startTime;
-            
+        #endregion
 
         private void Start()
         {
@@ -155,75 +148,62 @@ namespace GabStuff.Scripts
             if (containsWall)
                 _grabbedTarget = closestHit.point + closestHit.normal.normalized*_grabbedObject.Script.GetRadius();
             else
-                _grabbedTarget = _thisPlayer.Camera.transform.position + _facingVector*reach;
+                _grabbedTarget = 
+                    _thisPlayer.Camera.transform.position
+                    + _facingVector*reach
+                    + _thisPlayer.Rigidbody.linearVelocity * moveCompensation;
 
             Vector3 force = -_grabbedObject.Position+_grabbedTarget;
             _grabbedObject.Rigidbody.AddForce(
-                force*forceStrength + _thisPlayer.Rigidbody.linearVelocity,
+                force*forceStrength,
                 ForceMode.Impulse
             );
         }
 
         private void CheckIfGrabbedIsTooFar()
         {
-            // Check all objects in front of it in its reach
-            // If the gameobject is in that:
-                // Set isGrabbedObjectInFront to true
-            // if the gameobject is not in that:
-                // Set isGrabbedObjectInFront to false
-                
-            // every tick:
-            // If firstTick
-            //      startTime = ...
-            // If isGrabbedObjectInFront is true
-            //      if 0.5 seconds have passed since startTime
-            //      let go
-            
-            
-            Ray camToObject = new
-            (
-                _thisPlayer.Camera.transform.position, 
-                _grabbedObject.Position
-                    -_thisPlayer.Camera.transform.position
-            );
-            
-            RaycastHit[] hits = Physics.RaycastAll(
-                camToObject,
-                reach
-            );
-
-            isGrabbedObjectInFront = false;
-            foreach (RaycastHit hit in hits)
+            /* This checks if a raycast from the target to the grabbed object has nothing in the way of it.
+             * If the target is within the object then the raycast will return false
+             * If the target is outside of the object, but has line of sight, it will return true, then true
+             * If the target is outside of the object, but doesn't have line of sight, it will return true then false
+             */
+            if (Physics.Linecast(_grabbedTarget, _grabbedObject.Position, out var hit))
             {
                 if (hit.transform.gameObject == _grabbedObject.Object)
-                    isGrabbedObjectInFront = true;
+                {
+                    _isGrabbedObjectInFront = true;
+                    _isFirstTime = true;
+                }
+                else
+                {
+                    _isGrabbedObjectInFront = false;
+                }
             }
-
-            if (isGrabbedObjectInFront)
+            else
             {
-                isFirstTime = true;
-                isGrabbedObjectInFront = true;
+                _isGrabbedObjectInFront = true;
+                _isFirstTime = true;
             }
             
             CheckIfGrabbedTooFarForTime();
             
             print($"Current time: {Time.time}");
-            print($"Start time: {startTime}");
+            print($"Start time: {_startTime}");
         }
 
         private void CheckIfGrabbedTooFarForTime()
         {
-            if (isFirstTime)
+            if (_isFirstTime)
             {
-                isFirstTime = false;
-                startTime = Time.time;
+                _isFirstTime = false;
+                _startTime = Time.time;
             }
 
-            if (!isGrabbedObjectInFront)
+            if (!_isGrabbedObjectInFront)
             {
-                if (Time.time - startTime > 0.5f)
+                if (Time.time - _startTime > waitTimeBeforeDropOutOfRange)
                 {
-                    Ungrab();
+                    //Ungrab();
                 }
             }
         }
