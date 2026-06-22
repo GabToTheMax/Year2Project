@@ -19,6 +19,7 @@ namespace GabStuff.Scripts
         [Header("Grabbed object settings")]
         [SerializeField] private float moveCompensation;
         [SerializeField] private float linearDampingStrength;
+        [Range(0,5)] [SerializeField] private int forceMode;
         
         [Header("Layers")]
         [SerializeField] private LayerMask playerLayerMask;
@@ -144,19 +145,19 @@ namespace GabStuff.Scripts
                     }
                 }
             }
-            
-            if (containsWall)
-                _grabbedTarget = closestHit.point + closestHit.normal.normalized*_grabbedObject.Script.GetRadius();
-            else
-                _grabbedTarget = 
-                    _thisPlayer.Camera.transform.position
-                    + _facingVector*reach
-                    + _thisPlayer.Rigidbody.linearVelocity * moveCompensation;
 
-            Vector3 force = -_grabbedObject.Position+_grabbedTarget;
+            if (containsWall)
+                _grabbedTarget = closestHit.point + closestHit.normal.normalized * _grabbedObject.Script.GetRadius();
+            else
+                _grabbedTarget = _thisPlayer.Camera.transform.position + _facingVector * reach;
+
+            Vector3 force = -_grabbedObject.Position +
+                            _grabbedTarget +
+                            _thisPlayer.Rigidbody.linearVelocity * moveCompensation;
+            
             _grabbedObject.Rigidbody.AddForce(
                 force*forceStrength,
-                ForceMode.Impulse
+                (ForceMode)forceMode
             );
         }
 
