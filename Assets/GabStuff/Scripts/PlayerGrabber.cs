@@ -24,10 +24,6 @@ namespace GabStuff.Scripts
     
     public class PlayerGrabber : MonoBehaviour
     {
-        // TODO make portals work with this
-        // TODO make cubes ungrab when too far
-        // TODO don't make it spin when i let go
-        // TODO make it get out of the way when i'm too close
         
         [SerializeField] private float reach;
         [SerializeField] private LayerMask playerLayerMask;
@@ -63,7 +59,13 @@ namespace GabStuff.Scripts
                 return;
             }
             
-            if (!Physics.Raycast(_thisPlayer.Camera.transform.position, _facingVector, out RaycastHit hit, reach)) return;
+            if (!Physics.Raycast(
+                    _thisPlayer.Camera.transform.position,
+                    _facingVector,
+                    out RaycastHit hit,
+                    reach
+                )
+            ) return;
             
             GameObject hitObject = hit.transform.gameObject;
             
@@ -76,7 +78,11 @@ namespace GabStuff.Scripts
         private void Grab(GameObject hitObject)
         {
             _currentlyGrabbing = true;
-            _grabbedObject = new(hitObject, hitObject.GetComponent<PlayerGrabbable>(), hitObject.GetComponent<Rigidbody>());
+            _grabbedObject = new(
+                hitObject,
+                hitObject.GetComponent<PlayerGrabbable>(),
+                hitObject.GetComponent<Rigidbody>()
+            );
             _grabbedObject.Object.layer = grabbedObjectLayer;
             _grabbedObject.Rigidbody.linearDamping = linearDampingStrength;
             _grabbedObject.Rigidbody.useGravity = false;
@@ -94,7 +100,11 @@ namespace GabStuff.Scripts
         private void Update()
         {
             _facingVector = _thisPlayer.Camera.transform.forward;
-            Debug.DrawLine(_thisPlayer.Camera.transform.position, _thisPlayer.Position + _facingVector*reach, Color.red);
+            Debug.DrawLine (
+                _thisPlayer.Camera.transform.position,
+                _thisPlayer.Position + _facingVector*reach, 
+                Color.red
+            );
 
             MoveGrabbedObject();
         }
@@ -112,12 +122,18 @@ namespace GabStuff.Scripts
         {
             Vector3 grabbedToPlayer = _thisPlayer.Position - _grabbedObject.Position;
             grabbedToPlayer.y = 0;
-            _grabbedObject.Object.transform.rotation = Quaternion.LookRotation(grabbedToPlayer, _thisPlayer.Object.transform.up);
+            _grabbedObject.Object.transform.rotation = Quaternion.LookRotation(
+                grabbedToPlayer,
+                _thisPlayer.Object.transform.up
+            );
         }
         
         private void SetGrabbedPosition()
         {
-            RaycastHit[] hits = Physics.RaycastAll(_thisPlayer.Camera.transform.position,  _facingVector, reach, ~playerLayerMask);
+            RaycastHit[] hits = Physics.RaycastAll(
+                _thisPlayer.Camera.transform.position, 
+                _facingVector, reach, ~playerLayerMask
+            );
             
             bool containsWall = false;
             float closestDistance = reach + _grabbedObject.Script.GetRadius();
@@ -142,7 +158,10 @@ namespace GabStuff.Scripts
                 _grabbedTarget = _thisPlayer.Camera.transform.position + _facingVector*reach;
 
             Vector3 force = -_grabbedObject.Position+_grabbedTarget;
-            _grabbedObject.Rigidbody.AddForce(force*forceStrength + _thisPlayer.Rigidbody.linearVelocity, ForceMode.Impulse);
+            _grabbedObject.Rigidbody.AddForce(
+                force*forceStrength + _thisPlayer.Rigidbody.linearVelocity,
+                ForceMode.Impulse
+            );
         }
 
         private void CheckIfGrabbedIsTooFar()
@@ -161,8 +180,17 @@ namespace GabStuff.Scripts
             //      let go
             
             
-            Ray camToObject = new(_thisPlayer.Camera.transform.position, _grabbedObject.Position-_thisPlayer.Camera.transform.position);
-            RaycastHit[] hits = Physics.RaycastAll(camToObject, reach);
+            Ray camToObject = new
+            (
+                _thisPlayer.Camera.transform.position, 
+                _grabbedObject.Position
+                    -_thisPlayer.Camera.transform.position
+            );
+            
+            RaycastHit[] hits = Physics.RaycastAll(
+                camToObject,
+                reach
+            );
 
             isGrabbedObjectInFront = false;
             foreach (RaycastHit hit in hits)
