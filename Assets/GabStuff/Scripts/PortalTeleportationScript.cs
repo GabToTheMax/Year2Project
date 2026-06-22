@@ -57,34 +57,31 @@ namespace GabStuff.Scripts
             
             Quaternion portalRotationDifference = _thisPortal.Script.PortalRotationDifference;
             Vector3 portalToPlayer = _player.Position - _thisPortal.Position;
-            Vector3 otherPortalToPlayer = portalRotationDifference*_thisPortal.Script.Flip180 * portalToPlayer;
-            float distanceToTeleport = 0f;
-                
-            Debug.DrawLine(_thisPortal.Position, _thisPortal.Position+portalToPlayer, Color.red);
-            Debug.DrawLine(_otherPortal.Position, _otherPortal.Position+otherPortalToPlayer, Color.red);
+            Vector3 otherPortalToPlayerMirror = portalRotationDifference*_thisPortal.Script.Flip180 * portalToPlayer;
             
-            SetMirrorPosition(otherPortalToPlayer);
+            SetMirrorPosition(otherPortalToPlayerMirror);
             
-            var sphereColliders = Physics.OverlapSphere(collision.transform.position, distanceToTeleport);
+            var sphereColliders = Physics.OverlapSphere(collision.transform.position, 0);
             if (sphereColliders.Contains(_portalCollider))
             {
-                TeleportPlayer(portalRotationDifference, otherPortalToPlayer, distanceToTeleport);
+                TeleportPlayer(portalRotationDifference, otherPortalToPlayerMirror);
             }
         }
 
-        private void SetMirrorPosition(Vector3 otherPortalToPlayer)
+        private void SetMirrorPosition(Vector3 otherPortalToPlayer) 
         {
             _playerMirror.transform.position = _otherPortal.Position + otherPortalToPlayer;
+            _playerMirror.transform.rotation = _player.Object.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
         }
         
-        private void TeleportPlayer(Quaternion portalRotationDifference, Vector3 otherPortalToPlayer, float distanceToTeleport)
+        private void TeleportPlayer(Quaternion portalRotationDifference, Vector3 otherPortalToPlayer)
         {
-            print("Player in portal");
+            //print("Player in portal");
             _player.MovementScript.RotateMomentum(Quaternion.AngleAxis(180f, Vector3.up) * portalRotationDifference);
             _player.CameraScript.AddXRotation(180f + portalRotationDifference.eulerAngles.y);
 
             float verticalRotation = -portalRotationDifference.eulerAngles.z;
-            _player.Object.transform.position = _otherPortal.Position + otherPortalToPlayer + -_otherPortal.Object.transform.forward * 2 * distanceToTeleport;
+            _player.Object.transform.position = _otherPortal.Position + otherPortalToPlayer;
         }
     }
 }

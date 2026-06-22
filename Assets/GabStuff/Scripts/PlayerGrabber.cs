@@ -203,7 +203,7 @@ namespace GabStuff.Scripts
             {
                 if (Time.time - _startTime > waitTimeBeforeDropOutOfRange)
                 {
-                    //Ungrab();
+                    Ungrab();
                 }
             }
         }
