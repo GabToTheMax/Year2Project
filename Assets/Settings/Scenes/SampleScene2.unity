@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 40696117}
   - component: {fileID: 40696125}
   - component: {fileID: 40696126}
+  - component: {fileID: 40696127}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -407,14 +408,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGrabber
   reach: 3
   forceStrength: 3
-  waitTimeBeforeDropOutOfRange: 0.3
   moveCompensation: 0.2
+  forceMode: 2
   linearDampingStrength: 20
+  waitTimeBeforeDropOutOfRange: 0.3
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256
   playerLayer: 8
   grabbedObjectLayer: 7
+--- !u!114 &40696127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40696115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c925235a781e6f7b97d03d6e28be3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Teleportable
 --- !u!1 &46157005
 GameObject:
   m_ObjectHideFlags: 0
@@ -461,6 +475,7 @@ GameObject:
   - component: {fileID: 156153386}
   - component: {fileID: 156153385}
   - component: {fileID: 156153384}
+  - component: {fileID: 156153390}
   m_Layer: 0
   m_Name: Cube (5)
   m_TagString: Untagged
@@ -595,12 +610,24 @@ Transform:
   m_GameObject: {fileID: 156153383}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.63, y: 0.98, z: 0.22797}
+  m_LocalPosition: {x: -4.79, y: 0.98, z: 0.27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &156153390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156153383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c925235a781e6f7b97d03d6e28be3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GabStuff.Scripts.Teleportable
 --- !u!1 &300859166
 GameObject:
   m_ObjectHideFlags: 0
@@ -1612,6 +1639,7 @@ GameObject:
   - component: {fileID: 999592046}
   - component: {fileID: 999592045}
   - component: {fileID: 999592044}
+  - component: {fileID: 999592050}
   m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -1752,6 +1780,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &999592050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 999592043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c925235a781e6f7b97d03d6e28be3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GabStuff.Scripts.Teleportable
 --- !u!1 &1112677798
 GameObject:
   m_ObjectHideFlags: 0
@@ -1766,6 +1806,7 @@ GameObject:
   - component: {fileID: 1112677801}
   - component: {fileID: 1112677800}
   - component: {fileID: 1112677799}
+  - component: {fileID: 1112677805}
   m_Layer: 0
   m_Name: Cube (7)
   m_TagString: Untagged
@@ -1906,6 +1947,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1112677805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1112677798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c925235a781e6f7b97d03d6e28be3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GabStuff.Scripts.Teleportable
 --- !u!1 &1203250073
 GameObject:
   m_ObjectHideFlags: 0
@@ -2810,6 +2863,7 @@ GameObject:
   - component: {fileID: 1529036747}
   - component: {fileID: 1529036746}
   - component: {fileID: 1529036745}
+  - component: {fileID: 1529036751}
   m_Layer: 0
   m_Name: Cube (3)
   m_TagString: Untagged
@@ -2950,6 +3004,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1529036751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529036744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c925235a781e6f7b97d03d6e28be3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GabStuff.Scripts.Teleportable
 --- !u!1 &1535833569
 GameObject:
   m_ObjectHideFlags: 0
@@ -3722,6 +3788,7 @@ GameObject:
   - component: {fileID: 1820569039}
   - component: {fileID: 1820569038}
   - component: {fileID: 1820569037}
+  - component: {fileID: 1820569043}
   m_Layer: 0
   m_Name: Cube (4)
   m_TagString: Untagged
@@ -3862,6 +3929,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1820569043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1820569036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c925235a781e6f7b97d03d6e28be3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GabStuff.Scripts.Teleportable
 --- !u!1 &1852371310
 GameObject:
   m_ObjectHideFlags: 0
@@ -3988,6 +4067,7 @@ GameObject:
   - component: {fileID: 1947894992}
   - component: {fileID: 1947894991}
   - component: {fileID: 1947894990}
+  - component: {fileID: 1947894996}
   m_Layer: 0
   m_Name: Cube (6)
   m_TagString: Untagged
@@ -4128,6 +4208,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1947894996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947894989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c925235a781e6f7b97d03d6e28be3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GabStuff.Scripts.Teleportable
 --- !u!1 &1980901800
 GameObject:
   m_ObjectHideFlags: 0

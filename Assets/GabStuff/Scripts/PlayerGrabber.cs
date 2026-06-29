@@ -14,19 +14,22 @@ namespace GabStuff.Scripts
         [Header("Grabber settings")]
         [SerializeField] private float reach;
         [SerializeField] private float forceStrength;
-        [SerializeField] private float waitTimeBeforeDropOutOfRange;
+        [SerializeField] private float moveCompensation;
+        [Range(0,5)] [SerializeField] private int forceMode;
+        //[SerializeField] private float rotationStrengthProportion;
+        //[SerializeField] private float rotationStrengthDerivative;
         
         [Header("Grabbed object settings")]
-        [SerializeField] private float moveCompensation;
         [SerializeField] private float linearDampingStrength;
-        [Range(0,5)] [SerializeField] private int forceMode;
+        //[SerializeField] private float angularDampingStrength; 
+        [SerializeField] private float waitTimeBeforeDropOutOfRange;
         
         [Header("Layers")]
         [SerializeField] private LayerMask playerLayerMask;
         [SerializeField] private int playerLayer;
         [SerializeField] private int grabbedObjectLayer;
         
-        private Player _thisPlayer;
+        private Player _player;
         private bool _currentlyGrabbing;
         private GrabbedObject _grabbedObject;
         private Vector3 _facingVector;
@@ -39,7 +42,7 @@ namespace GabStuff.Scripts
 
         private void Start()
         {
-            _thisPlayer = PlayerManager.Instance.GetPlayer();
+            _player = PlayerManager.Instance.GetPlayer();
             Physics.IgnoreLayerCollision(grabbedObjectLayer, playerLayer);
         }
 
@@ -54,7 +57,7 @@ namespace GabStuff.Scripts
             }
             
             if (!Physics.Raycast(
-                    _thisPlayer.Camera.transform.position,
+                    _player.Camera.transform.position,
                     _facingVector,
                     out RaycastHit hit,
                     reach
@@ -79,13 +82,15 @@ namespace GabStuff.Scripts
             );
             _grabbedObject.Object.layer = grabbedObjectLayer;
             _grabbedObject.Rigidbody.linearDamping = linearDampingStrength;
+            //_grabbedObject.Rigidbody.angularDamping = angularDampingStrength;
             _grabbedObject.Rigidbody.useGravity = false;
         }
 
         private void Ungrab()
         {
             _grabbedObject.Rigidbody.useGravity = true;
-            _grabbedObject.Rigidbody.linearDamping = 0;
+            _grabbedObject.Rigidbody.linearDamping = 0f;
+            //_grabbedObject.Rigidbody.angularDamping = 0.05f;
             _grabbedObject.Object.layer = 0;
             _currentlyGrabbing = false;
             _grabbedObject = null;
@@ -93,17 +98,17 @@ namespace GabStuff.Scripts
 
         private void Update()
         {
-            _facingVector = _thisPlayer.Camera.transform.forward;
+            _facingVector = _player.Camera.transform.forward;
             Debug.DrawLine (
-                _thisPlayer.Camera.transform.position,
-                _thisPlayer.Position + _facingVector*reach, 
+                _player.Camera.transform.position,
+                _player.Position + _facingVector*reach, 
                 Color.red
             );
 
-            MoveGrabbedObject();
+            AffectGrabbedObject();
         }
 
-        private void MoveGrabbedObject()
+        private void AffectGrabbedObject()
         {
             if (!_currentlyGrabbing) return;
 
@@ -111,21 +116,11 @@ namespace GabStuff.Scripts
             SetGrabbedRotation();
             CheckIfGrabbedIsTooFar();
         }
-
-        private void SetGrabbedRotation()
-        {
-            Vector3 grabbedToPlayer = _thisPlayer.Position - _grabbedObject.Position;
-            grabbedToPlayer.y = 0;
-            _grabbedObject.Object.transform.rotation = Quaternion.LookRotation(
-                grabbedToPlayer,
-                _thisPlayer.Object.transform.up
-            );
-        }
         
         private void SetGrabbedPosition()
         {
             RaycastHit[] hits = Physics.RaycastAll(
-                _thisPlayer.Camera.transform.position, 
+                _player.Camera.transform.position, 
                 _facingVector, reach, ~playerLayerMask
             );
             
@@ -149,18 +144,34 @@ namespace GabStuff.Scripts
             if (containsWall)
                 _grabbedTarget = closestHit.point + closestHit.normal.normalized * _grabbedObject.Script.GetRadius();
             else
-                _grabbedTarget = _thisPlayer.Camera.transform.position + _facingVector * reach;
+                _grabbedTarget = _player.Camera.transform.position + _facingVector * reach;
 
             Vector3 force = -_grabbedObject.Position +
                             _grabbedTarget +
-                            _thisPlayer.Rigidbody.linearVelocity * moveCompensation;
+                            _player.Rigidbody.linearVelocity * moveCompensation;
             
             _grabbedObject.Rigidbody.AddForce(
                 force*forceStrength,
                 (ForceMode)forceMode
             );
         }
+        
+        private void SetGrabbedRotation()
+        {
+            Vector3 grabbedToPlayer = _player.Object.transform.forward;
+            grabbedToPlayer.y = 0;
+            _grabbedObject.Object.transform.rotation = Quaternion.LookRotation(grabbedToPlayer,Vector3.up);
 
+            /*Quaternion targetRotation = Quaternion.LookRotation(
+                grabbedToPlayer,
+                _player.Object.transform.up
+            );
+            Quaternion currentRotation = _grabbedObject.Object.transform.rotation;
+            Quaternion torque = targetRotation * Quaternion.Inverse(currentRotation);
+            _grabbedObject.Rigidbody.AddTorque(torque.x * rotationStrengthProportion, torque.y * rotationStrengthProportion, torque.z * rotationStrengthProportion, ForceMode.VelocityChange);
+            _grabbedObject.Rigidbody.AddTorque(-_grabbedObject.Rigidbody.angularVelocity * rotationStrengthDerivative);*/
+        }
+        
         private void CheckIfGrabbedIsTooFar()
         {
             /* This checks if a raycast from the target to the grabbed object has nothing in the way of it.
@@ -188,8 +199,10 @@ namespace GabStuff.Scripts
             
             CheckIfGrabbedTooFarForTime();
             
+            /*
             print($"Current time: {Time.time}");
             print($"Start time: {_startTime}");
+            */
         }
 
         private void CheckIfGrabbedTooFarForTime()

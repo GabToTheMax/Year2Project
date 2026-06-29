@@ -1,16 +1,23 @@
 using UnityEngine;
 
-public class Teleportable : MonoBehaviour
+namespace GabStuff.Scripts
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class Teleportable : MonoBehaviour
     {
+        private Rigidbody _rb;
         
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private void Start()
+        {
+            _rb = GetComponent<Rigidbody>();
+        }
+    
+        /// <summary>
+        /// Inverts the things momentum
+        /// </summary>
+        public void RotateMomentum(Quaternion rotation)
+        {
+            _rb.linearVelocity = rotation * _rb.linearVelocity;
+            _rb.angularVelocity = rotation * _rb.angularVelocity;
+        }
     }
 }
