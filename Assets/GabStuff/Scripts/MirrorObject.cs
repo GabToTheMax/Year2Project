@@ -6,7 +6,7 @@ namespace GabStuff.Scripts
     public class MirrorObject
     {
         public readonly GameObject MirrorGameObject;
-        private readonly Collider _mirrorCollider;
+        public bool IsTeleporting;
         
         public MirrorObject(Mesh mesh, Material material, Type colliderType, Collider collider)
         {
@@ -14,26 +14,26 @@ namespace GabStuff.Scripts
             MirrorGameObject.AddComponent<MeshFilter>().mesh = mesh;
             MirrorGameObject.AddComponent<MeshRenderer>().material = material;
             MirrorGameObject.AddComponent<Rigidbody>();
-            _mirrorCollider = MirrorGameObject.AddComponent(colliderType) as Collider;
+            var mirrorCollider1 = MirrorGameObject.AddComponent(colliderType) as Collider;
 
-            if (_mirrorCollider == null) return;
-            if (_mirrorCollider.GetType() == typeof(BoxCollider))
+            if (mirrorCollider1 == null) return;
+            if (mirrorCollider1.GetType() == typeof(BoxCollider))
             {
-                BoxCollider mirrorCollider = (_mirrorCollider as BoxCollider)!;
+                BoxCollider mirrorCollider = (mirrorCollider1 as BoxCollider)!;
                 BoxCollider objectCollider = (collider as BoxCollider)!; 
                 mirrorCollider.center = objectCollider.center; 
                 mirrorCollider.size =  objectCollider.size;
             }
-            else if (_mirrorCollider.GetType() == typeof(SphereCollider))
+            else if (mirrorCollider1.GetType() == typeof(SphereCollider))
             {
-                SphereCollider mirrorCollider = (_mirrorCollider as SphereCollider)!;
+                SphereCollider mirrorCollider = (mirrorCollider1 as SphereCollider)!;
                 SphereCollider objectCollider = (collider as SphereCollider)!; 
                 mirrorCollider.center = objectCollider.center; 
                 mirrorCollider.radius =  objectCollider.radius;
             }
-            else if (_mirrorCollider.GetType() == typeof(CapsuleCollider))
+            else if (mirrorCollider1.GetType() == typeof(CapsuleCollider))
             {
-                CapsuleCollider mirrorCollider = (_mirrorCollider as CapsuleCollider)!;
+                CapsuleCollider mirrorCollider = (mirrorCollider1 as CapsuleCollider)!;
                 CapsuleCollider objectCollider = (collider as CapsuleCollider)!; 
                 mirrorCollider.center = objectCollider.center;
                 mirrorCollider.radius =  objectCollider.radius;

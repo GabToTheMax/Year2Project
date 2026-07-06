@@ -81,12 +81,12 @@ namespace GabStuff.Scripts
             switch (_thisPortal.Index)
             {
                 case 0:
-                    Shader.SetGlobalVector($"_Portal0PlaneNormal", new Vector4(normalToPlane.x, normalToPlane.y, normalToPlane.z, 0));
-                    Shader.SetGlobalVector($"_Portal0PlanePoint", new Vector4(pointOnPlane.x, pointOnPlane.y, pointOnPlane.z, 0));
-                    break;
-                case 1:
                     Shader.SetGlobalVector($"_Portal1PlaneNormal", new Vector4(normalToPlane.x, normalToPlane.y, normalToPlane.z, 0));
                     Shader.SetGlobalVector($"_Portal1PlanePoint", new Vector4(pointOnPlane.x, pointOnPlane.y, pointOnPlane.z, 0));
+                    break;
+                case 1:
+                    Shader.SetGlobalVector($"_Portal2PlaneNormal", new Vector4(normalToPlane.x, normalToPlane.y, normalToPlane.z, 0));
+                    Shader.SetGlobalVector($"_Portal2PlanePoint", new Vector4(pointOnPlane.x, pointOnPlane.y, pointOnPlane.z, 0));
                     break;
             }
         }

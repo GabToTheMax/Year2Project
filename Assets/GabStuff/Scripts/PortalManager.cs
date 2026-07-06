@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GabStuff.Scripts
@@ -50,6 +51,7 @@ namespace GabStuff.Scripts
         #endregion
 
         private readonly Portal[] _portals = new Portal[2];
+        private readonly Dictionary<GameObject, MirrorObject> _mirrors = new(); 
 
         public void SetPortal(Portal portal)
         {
@@ -73,6 +75,11 @@ namespace GabStuff.Scripts
             }
 
             return null;
+        }
+
+        public Dictionary<GameObject, MirrorObject> GetMirrors()
+        {
+            return _mirrors;
         }
 
         public Portal[] GetPortals()

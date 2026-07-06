@@ -13,11 +13,11 @@ namespace GabStuff.Scripts
         private Portal _thisPortal;
         private Portal _otherPortal;
         private Collider _portalCollider;
-        private Dictionary<GameObject, MirrorObject> _mirrors;
         private Player _player;
         private Quaternion _portalRotationDifference;
         private Vector3 _portalToObject;
         private Vector3 _otherPortalToMirror;
+        private Dictionary<GameObject, MirrorObject> _mirrors = PortalManager.Instance.GetMirrors();
         #endregion
         
         private void Start()
@@ -36,8 +36,9 @@ namespace GabStuff.Scripts
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.GetComponent<Teleportable>())
+            if (other.GetComponent<Teleportable>() && !_mirrors.ContainsKey(other.gameObject))
             {
+                print("Something entered my collision. Sincerely portal #" + _thisPortal.Index);
                 Mesh otherMesh = other.gameObject.GetComponent<MeshFilter>().mesh;
                 Material otherMaterial = other.gameObject.GetComponent<MeshRenderer>().material;
 
@@ -50,10 +51,15 @@ namespace GabStuff.Scripts
 
         private void OnTriggerExit(Collider other)
         {
-            if (_mirrors.Keys.Contains(other.gameObject))
+            if (_mirrors.Keys.Contains(other.gameObject) && !_mirrors[other.gameObject].IsTeleporting)
             {
+                print("Something exited my collision. Sincerely portal #" + _thisPortal.Index);
                 Destroy(_mirrors[other.gameObject].MirrorGameObject);
                 _mirrors.Remove(other.gameObject);
+            }
+            else if (_mirrors.Keys.Contains(other.gameObject) && _mirrors[other.gameObject].IsTeleporting)
+            {
+                _mirrors[other.gameObject].IsTeleporting = true;
             }
         }
         
@@ -61,14 +67,7 @@ namespace GabStuff.Scripts
         {
             if (!_mirrors.Keys.Contains(collision.gameObject)) return;
 
-            MirrorObject mirror = _mirrors[collision.gameObject];
-            
-            _portalRotationDifference = _thisPortal.Script.PortalRotationDifference;
-            _portalToObject = collision.gameObject.transform.position - _thisPortal.Position;
-            _otherPortalToMirror = _portalRotationDifference * _thisPortal.Script.Flip180 * _portalToObject;
-            
-            mirror.SetMirrorPosition(_otherPortalToMirror, _otherPortal);
-            mirror.SetMirrorRotation(_portalRotationDifference, collision.gameObject.transform.rotation, _otherPortal.Object);
+            MoveTheMirror(collision.gameObject);
             
             var sphereColliders = Physics.OverlapSphere(collision.transform.position, 0);
             if (sphereColliders.Contains(_portalCollider))
@@ -76,10 +75,22 @@ namespace GabStuff.Scripts
                 Teleport(collision.gameObject);
             }
         }
+
+        private void MoveTheMirror(GameObject objectToMove)
+        {
+            MirrorObject mirror = _mirrors[objectToMove];
+            
+            _portalRotationDifference = _thisPortal.Script.PortalRotationDifference;
+            _portalToObject = objectToMove.transform.position - _thisPortal.Position;
+            _otherPortalToMirror = _portalRotationDifference * _thisPortal.Script.Flip180 * _portalToObject;
+            
+            mirror.SetMirrorPosition(_otherPortalToMirror, _otherPortal);
+            mirror.SetMirrorRotation(_portalRotationDifference, objectToMove.transform.rotation, _otherPortal.Object);
+        }
         
         public void Teleport(GameObject objectToTeleport)
         {
-            Destroy(_mirrors[objectToTeleport.gameObject].MirrorGameObject);
+            _mirrors[objectToTeleport].IsTeleporting = true;
             if (objectToTeleport == _player.Object)
             {
                 _player.CameraScript.AddXRotation(180f + _portalRotationDifference.eulerAngles.y);
@@ -92,6 +103,7 @@ namespace GabStuff.Scripts
             }
             
             objectToTeleport.transform.position = _otherPortal.Position + _otherPortalToMirror;
+            MoveTheMirror(objectToTeleport);
         }
         
         
