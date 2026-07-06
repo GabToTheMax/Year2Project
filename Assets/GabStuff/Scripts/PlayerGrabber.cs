@@ -90,7 +90,7 @@ namespace GabStuff.Scripts
         {
             _grabbedObject.Rigidbody.useGravity = true;
             _grabbedObject.Rigidbody.linearDamping = 0f;
-            //_grabbedObject.Rigidbody.angularDamping = 0.05f;
+            _grabbedObject.Rigidbody.angularVelocity = Vector3.zero;
             _grabbedObject.Object.layer = 0;
             _currentlyGrabbing = false;
             _grabbedObject = null;

@@ -15,6 +15,9 @@ namespace GabStuff.Scripts
         private Collider _portalCollider;
         private Dictionary<GameObject, MirrorObject> _mirrors;
         private Player _player;
+        private Quaternion _portalRotationDifference;
+        private Vector3 _portalToObject;
+        private Vector3 _otherPortalToMirror;
         #endregion
         
         private void Start()
@@ -38,10 +41,10 @@ namespace GabStuff.Scripts
                 Mesh otherMesh = other.gameObject.GetComponent<MeshFilter>().mesh;
                 Material otherMaterial = other.gameObject.GetComponent<MeshRenderer>().material;
 
-                var collider = other.GetComponent<Collider>();
-                var colliderType = collider.GetType();
+                var component = other.GetComponent<Collider>();
+                var colliderType = component.GetType();
                 
-                _mirrors.Add(other.gameObject, new MirrorObject(otherMesh, otherMaterial, colliderType, collider));
+                _mirrors.Add(other.gameObject, new MirrorObject(otherMesh, otherMaterial, colliderType, component));
             }
         }
 
@@ -60,34 +63,37 @@ namespace GabStuff.Scripts
 
             MirrorObject mirror = _mirrors[collision.gameObject];
             
-            Quaternion portalRotationDifference = _thisPortal.Script.PortalRotationDifference;
-            Vector3 portalToObject = collision.gameObject.transform.position - _thisPortal.Position;
-            Vector3 otherPortalToMirror = portalRotationDifference * _thisPortal.Script.Flip180 * portalToObject;
+            _portalRotationDifference = _thisPortal.Script.PortalRotationDifference;
+            _portalToObject = collision.gameObject.transform.position - _thisPortal.Position;
+            _otherPortalToMirror = _portalRotationDifference * _thisPortal.Script.Flip180 * _portalToObject;
             
-            mirror.SetMirrorPosition(otherPortalToMirror, _otherPortal);
-            mirror.SetMirrorRotation(portalRotationDifference, collision.gameObject.transform.rotation, _otherPortal.Object);
+            mirror.SetMirrorPosition(_otherPortalToMirror, _otherPortal);
+            mirror.SetMirrorRotation(_portalRotationDifference, collision.gameObject.transform.rotation, _otherPortal.Object);
             
             var sphereColliders = Physics.OverlapSphere(collision.transform.position, 0);
             if (sphereColliders.Contains(_portalCollider))
             {
-                Teleport(portalRotationDifference, otherPortalToMirror, collision.gameObject);
+                Teleport(collision.gameObject);
             }
         }
         
-        public void Teleport(Quaternion portalRotationDifference, Vector3 otherPortalToMirror, GameObject objectToTeleport)
+        public void Teleport(GameObject objectToTeleport)
         {
+            Destroy(_mirrors[objectToTeleport.gameObject].MirrorGameObject);
             if (objectToTeleport == _player.Object)
             {
-                _player.CameraScript.AddXRotation(180f + portalRotationDifference.eulerAngles.y);
-                _player.MovementScript.RotateMomentum(Quaternion.AngleAxis(180f, Vector3.up) * portalRotationDifference);
+                _player.CameraScript.AddXRotation(180f + _portalRotationDifference.eulerAngles.y);
+                _player.MovementScript.RotateMomentum(Quaternion.AngleAxis(180f, Vector3.up) * _portalRotationDifference);
             }
             else
             {
-                objectToTeleport.transform.rotation = Quaternion.AngleAxis(180f, _otherPortal.Object.transform.up) * portalRotationDifference * objectToTeleport.transform.rotation;
-                objectToTeleport.GetComponent<Teleportable>().RotateMomentum(Quaternion.AngleAxis(180f, Vector3.up) * portalRotationDifference);
+                objectToTeleport.transform.rotation = Quaternion.AngleAxis(180f, _otherPortal.Object.transform.up) * _portalRotationDifference * objectToTeleport.transform.rotation;
+                objectToTeleport.GetComponent<Teleportable>().RotateMomentum(Quaternion.AngleAxis(180f, _thisPortal.Object.transform.up) * _portalRotationDifference);
             }
             
-            objectToTeleport.transform.position = _otherPortal.Position + otherPortalToMirror;
+            objectToTeleport.transform.position = _otherPortal.Position + _otherPortalToMirror;
         }
+        
+        
     }
 }
