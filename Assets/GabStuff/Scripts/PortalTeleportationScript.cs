@@ -22,7 +22,7 @@ namespace GabStuff.Scripts
         
         private void Start()
         {
-            _mirrors = new Dictionary<GameObject, MirrorObject>();
+            _mirrors = PortalManager.Instance.GetMirrors();
             _thisPortal = GetComponent<PortalScript>().ThisPortal;
             _otherPortal = PortalManager.Instance.GetPortal(_thisPortal);
             _portalCollider = _thisPortal.Object.GetComponent<Collider>();
@@ -31,7 +31,7 @@ namespace GabStuff.Scripts
         
         /*
          *  I need to check if the player's center is across the portal, only then teleport them, to stop a teleport
-         *  loop. So, for each frame where there is something in the collision, check if one of the colliders is the player. If so, halt and teleport.
+         *  loop. So, for each frame where there is something in the collision, check if one of the colliders is the player. If so, teleport.
          */
 
         private void OnTriggerEnter(Collider other)
@@ -59,7 +59,7 @@ namespace GabStuff.Scripts
             }
             else if (_mirrors.Keys.Contains(other.gameObject) && _mirrors[other.gameObject].IsTeleporting)
             {
-                _mirrors[other.gameObject].IsTeleporting = true;
+                _mirrors[other.gameObject].IsTeleporting = false;
             }
         }
         
