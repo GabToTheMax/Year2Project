@@ -75,8 +75,8 @@ namespace GabStuff.Scripts
 
         private void SetClippingPlane()
         {
-            var normalToPlane = _otherPortal.Object.transform.forward;
-            var pointOnPlane = _otherPortal.Object.transform.position;
+            var normalToPlane = _thisPortal.Object.transform.forward;
+            var pointOnPlane = _thisPortal.Object.transform.position;
 
             switch (_thisPortal.Index)
             {

@@ -1,4 +1,4 @@
-Shader "Basics2/ClippablePortalShader"
+Shader "Basics2/BehindPortal2Clip"
 {
     Properties
     {
@@ -32,13 +32,9 @@ Shader "Basics2/ClippablePortalShader"
             CBUFFER_START(UnityPerMaterial)
             float4 _BaseColor;
             float4 _BaseTexture_ST;
-            vector _Portal1PlaneNormal;
-            vector _Portal1PlanePoint;
             vector _Portal2PlaneNormal;
             vector _Portal2PlanePoint;
             CBUFFER_END
-            
-            uniform float _CurrentCameraRendering;
             
             TEXTURE2D(_BaseTexture);
             SAMPLER(sampler_BaseTexture);
@@ -71,19 +67,9 @@ Shader "Basics2/ClippablePortalShader"
             {
                 float3 worldPos = i.positionWS;
                 
-                if ( _CurrentCameraRendering == 1 )
+                if (dot(_Portal2PlaneNormal ,worldPos-_Portal2PlanePoint) > 0)
                 {
-                    if (dot(_Portal2PlaneNormal ,worldPos-_Portal2PlanePoint) > 0)
-                    {
-                        discard;
-                    }
-                }
-                else if ( _CurrentCameraRendering == 2 )
-                {
-                    if (dot(_Portal1PlaneNormal ,worldPos-_Portal1PlanePoint) > 0)
-                    {
-                        discard;
-                    }
+                    discard;
                 }
                 float4 textureColor = SAMPLE_TEXTURE2D(_BaseTexture, sampler_BaseTexture, i.uv);
                 return textureColor * _BaseColor;
@@ -199,14 +185,14 @@ Shader "Basics2/ClippablePortalShader"
                 
                 if ( _CurrentCameraRendering == 1 )
                 {
-                    if (dot(_Portal2PlaneNormal ,worldPos-_Portal2PlanePoint) > 0)
+                    if (dot(_Portal1PlaneNormal ,worldPos-_Portal1PlanePoint) > 0)
                     {
                         return -1;
                     }
                 }
                 else if ( _CurrentCameraRendering == 2 )
                 {
-                    if (dot(_Portal1PlaneNormal ,worldPos-_Portal1PlanePoint) > 0)
+                    if (dot(_Portal2PlaneNormal ,worldPos-_Portal2PlanePoint) > 0)
                     {
                         return -1;
                     }
