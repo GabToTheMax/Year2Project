@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using GabStuff.Scripts.Singletons;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;

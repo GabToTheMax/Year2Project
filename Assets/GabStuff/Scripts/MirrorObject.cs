@@ -1,4 +1,5 @@
 using System;
+using GabStuff.Scripts.Singletons;
 using UnityEngine;
 
 namespace GabStuff.Scripts
@@ -7,6 +8,7 @@ namespace GabStuff.Scripts
     {
         public readonly GameObject MirrorGameObject;
         public bool IsTeleporting;
+        public Material OriginalMaterial;
         
         public MirrorObject(Mesh mesh, Material material, Type colliderType, Collider collider)
         {

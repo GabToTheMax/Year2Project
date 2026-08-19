@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using GabStuff.Scripts.Singletons;
 using UnityEngine;
 
 namespace GabStuff.Scripts

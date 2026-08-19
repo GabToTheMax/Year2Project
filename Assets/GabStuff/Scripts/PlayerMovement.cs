@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using GabStuff.Scripts.Singletons;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
