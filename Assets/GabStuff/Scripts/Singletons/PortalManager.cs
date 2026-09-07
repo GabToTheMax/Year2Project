@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace GabStuff.Scripts
+namespace GabStuff.Scripts.Singletons
 {
     // DONE: Add portal getters and make the array private
     // TODO: Make the set Portal thing more robust (in case setPortal fails and I try get the other portal)
@@ -42,7 +43,7 @@ namespace GabStuff.Scripts
             {
                 if (_instance == null)
                 {
-                    _instance = new PortalManager();
+                    _instance = new PortalManager(); 
                 }
                 return _instance;
             }
@@ -50,6 +51,8 @@ namespace GabStuff.Scripts
         #endregion
 
         private readonly Portal[] _portals = new Portal[2];
+        private readonly Dictionary<GameObject, MirrorObject> _mirrors = new(); 
+        private GameSettings _gameSettings;
 
         public void SetPortal(Portal portal)
         {
@@ -73,6 +76,11 @@ namespace GabStuff.Scripts
             }
 
             return null;
+        }
+
+        public Dictionary<GameObject, MirrorObject> GetMirrors()
+        {
+            return _mirrors;
         }
 
         public Portal[] GetPortals()

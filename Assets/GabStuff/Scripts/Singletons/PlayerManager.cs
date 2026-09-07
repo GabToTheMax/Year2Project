@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GabStuff.Scripts
+namespace GabStuff.Scripts.Singletons
 {
     public class Player
     {

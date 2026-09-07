@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using GabStuff.Scripts.Singletons;
 using UnityEngine;
 
 namespace GabStuff.Scripts
@@ -75,10 +76,20 @@ namespace GabStuff.Scripts
 
         private void SetClippingPlane()
         {
-            var normalToPlane = _otherPortal.Object.transform.forward;
-            var pointOnPlane = _otherPortal.Object.transform.position;
-            Shader.SetGlobalVector($"_Portal{_thisPortal.Index+1}PlaneNormal", new Vector4(normalToPlane.x, normalToPlane.y, normalToPlane.z, 0));
-            Shader.SetGlobalVector($"_Portal{_thisPortal.Index+1}PlanePoint", new Vector4(pointOnPlane.x, pointOnPlane.y, pointOnPlane.z, 0));
+            var normalToPlane = _thisPortal.Object.transform.forward;
+            var pointOnPlane = _thisPortal.Object.transform.position;
+
+            switch (_thisPortal.Index)
+            {
+                case 0:
+                    Shader.SetGlobalVector($"_Portal1PlaneNormal", new Vector4(normalToPlane.x, normalToPlane.y, normalToPlane.z, 0));
+                    Shader.SetGlobalVector($"_Portal1PlanePoint", new Vector4(pointOnPlane.x, pointOnPlane.y, pointOnPlane.z, 0));
+                    break;
+                case 1:
+                    Shader.SetGlobalVector($"_Portal2PlaneNormal", new Vector4(normalToPlane.x, normalToPlane.y, normalToPlane.z, 0));
+                    Shader.SetGlobalVector($"_Portal2PlanePoint", new Vector4(pointOnPlane.x, pointOnPlane.y, pointOnPlane.z, 0));
+                    break;
+            }
         }
     }
 }
