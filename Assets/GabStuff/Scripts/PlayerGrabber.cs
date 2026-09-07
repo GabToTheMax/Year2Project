@@ -122,7 +122,9 @@ namespace GabStuff.Scripts
         {
             RaycastHit[] hits = Physics.RaycastAll(
                 _player.Camera.transform.position, 
-                _facingVector, reach, ~playerLayerMask
+                _facingVector,
+                reach,
+                ~playerLayerMask
             );
             
             bool containsWall = false;

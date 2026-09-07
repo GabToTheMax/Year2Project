@@ -16,6 +16,9 @@ namespace GabStuff.Scripts
             MirrorGameObject.AddComponent<MeshFilter>().mesh = mesh;
             MirrorGameObject.AddComponent<MeshRenderer>().material = material;
             MirrorGameObject.AddComponent<Rigidbody>();
+            
+            #region Collider stuff
+
             var mirrorCollider1 = MirrorGameObject.AddComponent(colliderType) as Collider;
 
             if (mirrorCollider1 == null) return;
@@ -42,6 +45,8 @@ namespace GabStuff.Scripts
                 mirrorCollider.direction = objectCollider.direction;
                 mirrorCollider.height = objectCollider.height;
             }
+
+            #endregion
         }
         
         public void SetMirrorPosition(Vector3 otherPortalToMirror, Portal otherPortal) 
@@ -49,9 +54,9 @@ namespace GabStuff.Scripts
             MirrorGameObject.transform.position = otherPortal.Position + otherPortalToMirror;
         }
 
-        public void SetMirrorRotation(Quaternion otherPortalRotationDifference, Quaternion mirroredRotation, GameObject otherPortal)
+        public void SetMirrorRotation(Quaternion otherPortalRotationDifference, Quaternion objectRotation, GameObject otherPortal)
         {
-            MirrorGameObject.transform.rotation = Quaternion.AngleAxis(180f, otherPortal.transform.up) * otherPortalRotationDifference * mirroredRotation;
+            MirrorGameObject.transform.rotation = Quaternion.AngleAxis(180f, otherPortal.transform.up) * otherPortalRotationDifference * objectRotation;
         }
     }
 }

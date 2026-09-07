@@ -33,41 +33,38 @@ namespace GabStuff.Scripts
             _gameSettings = GameManager.Instance.GetGameSettings();
         }
         
-        /*
-         *  I need to check if the player's center is across the portal, only then teleport them, to stop a teleport
-         *  loop. So, for each frame where there is something in the collision, check if one of the colliders is the player. If so, teleport.
-         */
-
         private void OnTriggerEnter(Collider other)
         {
             if (other.GetComponent<Teleportable>() && !_mirrors.ContainsKey(other.gameObject))
             {
                 Material originalMaterialCopy = other.gameObject.GetComponent<MeshRenderer>().material;
-                Material otherMaterial = null;
+                Material mirrorMaterial = null;
                 print("Something entered my collision. Sincerely portal #" + _thisPortal.Index);
+                
+                // TODO Look into whether I can maybe create the object material first, then assign it after the switch statement, just like the mirrorMaterial. It makes the code more readable 
                 
                 switch (_thisPortal.Index)
                 {
                     case 0:
-                        otherMaterial = new Material(_gameSettings.BehindPortal2Shader);
+                        mirrorMaterial = new Material(_gameSettings.BehindPortal2Shader);
                         other.gameObject.GetComponent<MeshRenderer>().material = new Material(_gameSettings.BehindPortal1Shader);
                         break;                
                     case 1:
-                        otherMaterial = new Material(_gameSettings.BehindPortal1Shader);
+                        mirrorMaterial = new Material(_gameSettings.BehindPortal1Shader);
                         other.gameObject.GetComponent<MeshRenderer>().material = new Material(_gameSettings.BehindPortal2Shader);
                         break;
                     default:
                         throw new Exception("Portal with incorrect index");
                 }
                 
-                otherMaterial.CopyPropertiesFromMaterial(originalMaterialCopy);
+                mirrorMaterial.CopyPropertiesFromMaterial(originalMaterialCopy);
                 other.gameObject.GetComponent<MeshRenderer>().material.CopyPropertiesFromMaterial(originalMaterialCopy);
                     
                 var otherMesh = other.gameObject.GetComponent<MeshFilter>().mesh;
                 var component = other.GetComponent<Collider>();
                 var colliderType = component.GetType();
                 
-                _mirrors.Add(other.gameObject, new MirrorObject(otherMesh, otherMaterial, colliderType, component));
+                _mirrors.Add(other.gameObject, new MirrorObject(otherMesh, mirrorMaterial, colliderType, component));
                 _mirrors[other.gameObject].OriginalMaterial = originalMaterialCopy;
             }
         }
@@ -88,6 +85,11 @@ namespace GabStuff.Scripts
             }
         }
         
+        /*
+         *  I need to check if the player's center is across the portal, only then teleport them, to stop a teleport
+         *  loop. So, for each frame where there is something in the collision, check if one of the colliders is the player. If so, teleport.
+         */
+
         private void OnTriggerStay(Collider collision)
         {
             if (!_mirrors.Keys.Contains(collision.gameObject)) return;
