@@ -23,6 +23,7 @@ namespace GabStuff.Scripts
             _spiritCollider.convex = true;
             _currentPortal = p;
             SpiritGameObject.layer = GameManager.Instance.GetGameSettings().SpiritRealmLayer;
+            SpiritGameObject.name = $"{OriginalGameObject.name} spirit object";
         }
 
         /// <param name="thisPortalToObject">A vector from the portal, to the object which the SpiritObject is based off.</param>
@@ -30,15 +31,19 @@ namespace GabStuff.Scripts
         {
             SpiritGameObject.transform.position = targetPortal.Position + localObjectPosition;
             SpiritGameObject.transform.rotation = objectRotation;
+            SpiritGameObject.transform.localScale = OriginalGameObject.transform.localScale;
         }
         
         public void SliceMeshAtPortal(Portal p)
         {
-            Vector3 normal = Quaternion.Inverse(OriginalGameObject.transform.rotation) * _currentPortal.Object.transform.forward;
-            Vector3 position = _currentPortal.Object.transform.position - OriginalGameObject.transform.position;
-            //position = Quaternion.rotate
-            Plane portalPlane = new Plane(position, normal);
+            Vector3 scale = OriginalGameObject.transform.localScale;
+            Vector3 normal = Quaternion.Inverse(OriginalGameObject.transform.rotation) * p.Object.transform.forward;
+            Vector3 objectToPortalVector = (p.Object.transform.position - OriginalGameObject.transform.position);
+            objectToPortalVector = Quaternion.Inverse(OriginalGameObject.transform.rotation) * objectToPortalVector;
+            objectToPortalVector = Vector3.Scale(scale, objectToPortalVector);
+            Plane portalPlane = new Plane(objectToPortalVector, normal);
             var slicedHull = Slicer.Slice(_collisionMesh, portalPlane, new TextureRegion(), 0);
+            if (slicedHull == null) return;
             var slicedMesh = slicedHull.lowerHull;
             _spiritCollider.sharedMesh = slicedMesh;
         }

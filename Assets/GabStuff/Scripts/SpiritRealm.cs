@@ -9,8 +9,8 @@ namespace GabStuff.Scripts
         private Dictionary<GameObject, SpiritObject> _spiritObjects;
         private Portal _thisPortal;
         private Portal _otherPortal;
-        
-        void Start()
+
+        private void Start()
         {
             GameManager.Instance.TestForMeshColliders();
             _thisPortal = GetComponent<PortalScript>().ThisPortal;
@@ -35,9 +35,10 @@ namespace GabStuff.Scripts
         {
             if (_spiritObjects.ContainsKey(other.gameObject))
             {
-                SpiritObject currentSpiritObject =  _spiritObjects[other.gameObject];
+                SpiritObject currentSpiritObject = _spiritObjects[other.gameObject];
                 Vector3 objectPosition = other.gameObject.transform.position;
                 Quaternion objectRotation = other.gameObject.transform.rotation;
+                
                 currentSpiritObject.TransformSpiritObject(objectPosition-_thisPortal.Position, objectRotation, _thisPortal);
                 currentSpiritObject.SliceMeshAtPortal(_thisPortal);
             }
