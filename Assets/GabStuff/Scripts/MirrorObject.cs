@@ -10,43 +10,18 @@ namespace GabStuff.Scripts
         public bool IsTeleporting;
         public Material OriginalMaterial;
         
-        public MirrorObject(Mesh mesh, Material material, Type colliderType, Collider collider)
+        public MirrorObject(Mesh mesh, Material material, Mesh collisionMesh)
         {
             MirrorGameObject = new("PlayerMirror");
             MirrorGameObject.AddComponent<MeshFilter>().mesh = mesh;
             MirrorGameObject.AddComponent<MeshRenderer>().material = material;
             MirrorGameObject.AddComponent<Rigidbody>();
+
+            if (collisionMesh == null) return;
             
-            #region Collider stuff
-
-            var mirrorCollider1 = MirrorGameObject.AddComponent(colliderType) as Collider;
-
-            if (mirrorCollider1 == null) return;
-            if (mirrorCollider1.GetType() == typeof(BoxCollider))
-            {
-                BoxCollider mirrorCollider = (mirrorCollider1 as BoxCollider)!;
-                BoxCollider objectCollider = (collider as BoxCollider)!; 
-                mirrorCollider.center = objectCollider.center; 
-                mirrorCollider.size =  objectCollider.size;
-            }
-            else if (mirrorCollider1.GetType() == typeof(SphereCollider))
-            {
-                SphereCollider mirrorCollider = (mirrorCollider1 as SphereCollider)!;
-                SphereCollider objectCollider = (collider as SphereCollider)!; 
-                mirrorCollider.center = objectCollider.center; 
-                mirrorCollider.radius =  objectCollider.radius;
-            }
-            else if (mirrorCollider1.GetType() == typeof(CapsuleCollider))
-            {
-                CapsuleCollider mirrorCollider = (mirrorCollider1 as CapsuleCollider)!;
-                CapsuleCollider objectCollider = (collider as CapsuleCollider)!; 
-                mirrorCollider.center = objectCollider.center;
-                mirrorCollider.radius =  objectCollider.radius;
-                mirrorCollider.direction = objectCollider.direction;
-                mirrorCollider.height = objectCollider.height;
-            }
-
-            #endregion
+            var meshCollider = MirrorGameObject.AddComponent<MeshCollider>();
+            meshCollider.sharedMesh = collisionMesh;
+            meshCollider.convex = true;
         }
         
         public void SetMirrorPosition(Vector3 otherPortalToMirror, Portal otherPortal) 

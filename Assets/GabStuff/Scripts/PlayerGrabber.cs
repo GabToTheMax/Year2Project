@@ -11,7 +11,6 @@ namespace GabStuff.Scripts
     public class PlayerGrabber : MonoBehaviour
     {
         #region variables
-        
         [Header("Grabber settings")]
         [SerializeField] private float reach;
         [SerializeField] private float forceStrength;
@@ -27,9 +26,9 @@ namespace GabStuff.Scripts
         
         [Header("Layers")]
         [SerializeField] private LayerMask playerLayerMask;
-        [SerializeField] private int playerLayer;
-        [SerializeField] private int grabbedObjectLayer;
         
+        private int _playerLayer;
+        private int _grabbedObjectLayer;
         private Player _player;
         private bool _currentlyGrabbing;
         private GrabbedObject _grabbedObject;
@@ -44,7 +43,9 @@ namespace GabStuff.Scripts
         private void Start()
         {
             _player = PlayerManager.Instance.GetPlayer();
-            Physics.IgnoreLayerCollision(grabbedObjectLayer, playerLayer);
+            _playerLayer = GameManager.Instance.GetGameSettings().PlayerLayer;
+            _grabbedObjectLayer = GameManager.Instance.GetGameSettings().GrabbedObjectLayer;
+            Physics.IgnoreLayerCollision(_grabbedObjectLayer, _playerLayer);
         }
 
         public void OnGrab(InputAction.CallbackContext ctx)
@@ -81,7 +82,7 @@ namespace GabStuff.Scripts
                 hitObject.GetComponent<PlayerGrabbable>(),
                 hitObject.GetComponent<Rigidbody>()
             );
-            _grabbedObject.Object.layer = grabbedObjectLayer;
+            _grabbedObject.Object.layer = _grabbedObjectLayer;
             _grabbedObject.Rigidbody.linearDamping = linearDampingStrength;
             //_grabbedObject.Rigidbody.angularDamping = angularDampingStrength;
             _grabbedObject.Rigidbody.useGravity = false;

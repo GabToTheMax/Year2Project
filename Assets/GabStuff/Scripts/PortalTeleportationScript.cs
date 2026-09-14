@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GabStuff.Scripts.ScriptableObjects;
 using GabStuff.Scripts.Singletons;
 using Unity.Mathematics;
 using Unity.VisualScripting;
@@ -61,10 +62,9 @@ namespace GabStuff.Scripts
                 other.gameObject.GetComponent<MeshRenderer>().material.CopyPropertiesFromMaterial(originalMaterialCopy);
                     
                 var otherMesh = other.gameObject.GetComponent<MeshFilter>().mesh;
-                var component = other.GetComponent<Collider>();
-                var colliderType = component.GetType();
+                var collisionMesh = other.GetComponent<MeshCollider>().sharedMesh;
                 
-                _mirrors.Add(other.gameObject, new MirrorObject(otherMesh, mirrorMaterial, colliderType, component));
+                _mirrors.Add(other.gameObject, new MirrorObject(otherMesh, mirrorMaterial, collisionMesh));
                 _mirrors[other.gameObject].OriginalMaterial = originalMaterialCopy;
             }
         }
