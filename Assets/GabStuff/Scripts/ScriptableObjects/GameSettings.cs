@@ -5,7 +5,7 @@ namespace GabStuff.Scripts.ScriptableObjects
     [CreateAssetMenu(fileName = "GameSettings", menuName = "Scriptable Objects/GameSettings")]
     public class GameSettings : ScriptableObject
     {
-        [SerializeField] public Shader behindPortal1Shader; 
+        [SerializeField] private Shader behindPortal1Shader;
         public Shader BehindPortal1Shader => behindPortal1Shader;
         
         [SerializeField] private Shader behindPortal2Shader;

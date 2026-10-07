@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using EzySlice;
 using GabStuff.Scripts.Singletons;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace GabStuff.Scripts
     public class SpiritObject
     {
         private readonly GameObject _originalGameObject;
-        private readonly GameObject _spiritGameObject;
+        public readonly GameObject SpiritGameObject;
         private readonly Mesh _collisionMesh;
         private readonly Portal _currentPortal;
         private readonly MeshCollider _spiritCollider;
@@ -18,21 +19,25 @@ namespace GabStuff.Scripts
         public SpiritObject(GameObject g, Portal p)
         {
             _originalGameObject = g;
-            _spiritGameObject = new GameObject();
-            _spiritCollider = _spiritGameObject.AddComponent<MeshCollider>();
             _collisionMesh = g.GetComponent<MeshCollider>().sharedMesh;
+            
+            SpiritGameObject = new GameObject($"{_originalGameObject.name} spirit object");
+            GameObject spiritObjectParent = GameManager.Instance.SpiritObjectParent;
+            SpiritGameObject.transform.SetParent(spiritObjectParent.transform);
+            _spiritCollider = SpiritGameObject.AddComponent<MeshCollider>();
             _spiritCollider.sharedMesh = _collisionMesh;
             _spiritCollider.convex = true;
+            
             _currentPortal = p;
-            _spiritGameObject.layer = GameManager.Instance.GetGameSettings().SpiritRealmLayer;
-            _spiritGameObject.name = $"{_originalGameObject.name} spirit object";
+            
+            SpiritGameObject.layer = GameManager.Instance.GetGameSettings().SpiritRealmLayer;
         }
 
         /// <param name="thisPortalToObject">A vector from the portal, to the object which the SpiritObject is based off.</param>
         public void TransformSpiritObject(Vector3 localObjectPosition, Quaternion objectRotation, Portal targetPortal)
         {
-            _spiritGameObject.transform.position = targetPortal.Position + localObjectPosition;
-            _spiritGameObject.transform.rotation = objectRotation;
+            SpiritGameObject.transform.position = targetPortal.Position + localObjectPosition;
+            SpiritGameObject.transform.rotation = objectRotation;
         }
 
         private static Mesh ScaleMesh(Mesh mesh, Vector3 scale)

@@ -1,4 +1,6 @@
+using System;
 using GabStuff.Scripts.ScriptableObjects;
+using Unity.VectorGraphics;
 using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer;
 using UnityEditor;
@@ -27,7 +29,9 @@ namespace GabStuff.Scripts.Singletons
         #endregion
         
         private GameSettings _gameSettings;
-        
+        public GameObject MirrorObjectParent { get; private set; }
+        public GameObject SpiritObjectParent { get; private set; }
+
         public GameSettings GetGameSettings()
         {
             if (_gameSettings == null)
@@ -54,6 +58,23 @@ namespace GabStuff.Scripts.Singletons
             }
             if (allMeshColliders)
                 Debug.Log("GOOD: ALL GAMEOBJECTS HAVE MESH COLLIDERS");
+        }
+
+        public void RegisterGameObject(GameObject go, RegisterType registerType)
+        {
+            switch (registerType)
+            {
+                case RegisterType.MirrorObjectParent:
+                    MirrorObjectParent = go;
+                    break;
+                
+                case RegisterType.SpiritObjectParent:
+                    SpiritObjectParent= go;
+                    break;
+                
+                default:
+                    throw new Exception($"Unknown registerType {registerType}");
+            }
         }
     }
 }

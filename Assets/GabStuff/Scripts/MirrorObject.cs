@@ -6,17 +6,22 @@ namespace GabStuff.Scripts
 {
     public class MirrorObject
     {
+        private readonly GameObject _mirrorObject;
         public readonly GameObject MirrorGameObject;
         public bool IsTeleporting;
         public Material OriginalMaterial;
         
-        public MirrorObject(Mesh mesh, Material material, Mesh collisionMesh)
+        public MirrorObject(GameObject originalObject, Material material)
         {
-            MirrorGameObject = new("PlayerMirror");
-            MirrorGameObject.AddComponent<MeshFilter>().mesh = mesh;
+            GameObject mirrorObjectParent = GameManager.Instance.MirrorObjectParent;
+            
+            MirrorGameObject = new($"{originalObject.name} mirror object");
+            MirrorGameObject.transform.parent = mirrorObjectParent.transform;
+            MirrorGameObject.AddComponent<MeshFilter>().mesh = originalObject.GetComponent<MeshFilter>().mesh;;
             MirrorGameObject.AddComponent<MeshRenderer>().material = material;
             MirrorGameObject.AddComponent<Rigidbody>();
 
+            var collisionMesh = originalObject.GetComponent<MeshCollider>().sharedMesh;
             if (collisionMesh == null) return;
             
             var meshCollider = MirrorGameObject.AddComponent<MeshCollider>();

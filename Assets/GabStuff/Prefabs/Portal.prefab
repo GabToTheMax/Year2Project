@@ -150,6 +150,7 @@ GameObject:
   - component: {fileID: 8864469708250100865}
   - component: {fileID: 9038452939446156063}
   - component: {fileID: 8821431216618633651}
+  - component: {fileID: 4536278369488247920}
   - component: {fileID: 217481438566128674}
   - component: {fileID: 8547933975287694460}
   m_Layer: 0
@@ -246,9 +247,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PortalScript
   portalMaterial: {fileID: 0}
-  debugMaterial: {fileID: 0}
-  clippingPlaneMaterial: {fileID: 0}
-  debugPoint: {fileID: 0}
   index: 0
 --- !u!114 &8821431216618633651
 MonoBehaviour:
@@ -262,6 +260,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa74705fcccc5221483027e8f3e31bf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PortalTeleportationScript
+--- !u!114 &4536278369488247920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6980229789912125838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fafc2a287935f148924e93d57c96b20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
 --- !u!54 &217481438566128674
 Rigidbody:
   m_ObjectHideFlags: 0

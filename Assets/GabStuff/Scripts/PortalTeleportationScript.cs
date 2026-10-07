@@ -18,7 +18,6 @@ namespace GabStuff.Scripts
         private Collider _portalCollider;
         private Player _player;
         private Quaternion _portalRotationDifference;
-        private Vector3 _portalToObject;
         private Vector3 _otherPortalToMirror;
         private Dictionary<GameObject, MirrorObject> _mirrors = PortalManager.Instance.GetMirrors();
         private GameSettings _gameSettings;
@@ -61,19 +60,32 @@ namespace GabStuff.Scripts
                 mirrorMaterial.CopyPropertiesFromMaterial(originalMaterialCopy);
                 other.gameObject.GetComponent<MeshRenderer>().material.CopyPropertiesFromMaterial(originalMaterialCopy);
                     
-                var otherMesh = other.gameObject.GetComponent<MeshFilter>().mesh;
-                var collisionMesh = other.GetComponent<MeshCollider>().sharedMesh;
                 
-                _mirrors.Add(other.gameObject, new MirrorObject(otherMesh, mirrorMaterial, collisionMesh));
+                _mirrors.Add(other.gameObject, new MirrorObject(other.GameObject(), mirrorMaterial));
                 _mirrors[other.gameObject].OriginalMaterial = originalMaterialCopy;
             }
         }
 
+        /*
+         * Whenever something exits a portal, there are three possibilities.
+         * If it's not an object or player, then I do nothing
+         * 
+         * If it is an object or player which isn't teleporting, then I delete the object mirror. I also have some
+         * extra logic to delete the spirit object of the mirror, as otherwise I delete it before it exits the portal
+         * meaning it wouldn't get deleted by itself. That's why I manually do it here.
+         * 
+         * If it is an object or player which is teleporting, then I set IsTeleporting to false since the boolean has
+         * served its purpose. Now when it properly leaves it will delete the mirror.
+         */
+        
         private void OnTriggerExit(Collider other)
         {
             if (_mirrors.Keys.Contains(other.gameObject) && !_mirrors[other.gameObject].IsTeleporting)
             {
                 print("Something exited my collision. Sincerely portal #" + _thisPortal.Index);
+                
+                _otherPortal.SpiritRealm.DestroySpiritObject(_mirrors[other.gameObject].MirrorGameObject);
+                
                 Destroy(_mirrors[other.gameObject].MirrorGameObject);
                 Material originalMaterial = _mirrors[other.gameObject].OriginalMaterial;
                 _mirrors.Remove(other.gameObject);
@@ -103,19 +115,19 @@ namespace GabStuff.Scripts
             }
         }
 
-        private void MoveTheMirror(GameObject objectToMove)
+        public void MoveTheMirror(GameObject objectToMove)
         {
             MirrorObject mirror = _mirrors[objectToMove];
             
             _portalRotationDifference = _thisPortal.Script.PortalRotationDifference;
-            _portalToObject = objectToMove.transform.position - _thisPortal.Position;
-            _otherPortalToMirror = _portalRotationDifference * _thisPortal.Script.Flip180 * _portalToObject;
+            var portalToObject = objectToMove.transform.position - _thisPortal.Position;
+            _otherPortalToMirror = _portalRotationDifference * _thisPortal.Script.Flip180 * portalToObject;
             
             mirror.SetMirrorPosition(_otherPortalToMirror, _otherPortal);
             mirror.SetMirrorRotation(_portalRotationDifference, objectToMove.transform.rotation, _otherPortal.Object);
         }
-        
-        public void Teleport(GameObject objectToTeleport)
+
+        private void Teleport(GameObject objectToTeleport)
         {
             _mirrors[objectToTeleport].IsTeleporting = true;
             if (objectToTeleport == _player.Object)
@@ -130,7 +142,7 @@ namespace GabStuff.Scripts
             }
             
             objectToTeleport.transform.position = _otherPortal.Position + _otherPortalToMirror;
-            MoveTheMirror(objectToTeleport);
+            _otherPortal.TeleportationScript.MoveTheMirror(objectToTeleport);
             
             Material buffer = objectToTeleport.GetComponent<MeshRenderer>().material;
             objectToTeleport.GetComponent<MeshRenderer>().material =

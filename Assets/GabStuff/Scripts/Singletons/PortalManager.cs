@@ -13,11 +13,13 @@ namespace GabStuff.Scripts.Singletons
     public class Portal
     {
         public readonly PortalScript Script;
+        public readonly PortalTeleportationScript TeleportationScript;
         public readonly GameObject Object;
         public readonly Camera Camera;
         public readonly Material Material;
         public readonly Mesh Mesh;
         public readonly int Index;
+        public readonly SpiritRealm SpiritRealm;
         public Vector3 Position => Object.transform.position;
 
         public Portal(GameObject o, Material m)
@@ -28,6 +30,8 @@ namespace GabStuff.Scripts.Singletons
             Camera = Object.GetComponentInChildren<Camera>();
             Material = m;
             Mesh = Object.GetComponentInChildren<MeshFilter>().mesh;
+            SpiritRealm = Object.GetComponent<SpiritRealm>();
+            TeleportationScript = Object.GetComponent<PortalTeleportationScript>();
         }
     }
     

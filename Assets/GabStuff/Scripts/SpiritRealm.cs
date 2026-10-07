@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GabStuff.Scripts
 {
-    public class NewMonoBehaviourScript : MonoBehaviour
+    public class SpiritRealm : MonoBehaviour
     {
         private Dictionary<GameObject, SpiritObject> _spiritObjects;
         private Portal _thisPortal;
@@ -25,10 +25,7 @@ namespace GabStuff.Scripts
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.GetComponent<Teleportable>())
-            {
-                _spiritObjects.Add(other.gameObject, new SpiritObject(other.gameObject, _thisPortal));
-            }
+            _spiritObjects.Add(other.gameObject, new SpiritObject(other.gameObject, _thisPortal));
         }
 
         private void OnTriggerStay(Collider other)
@@ -41,6 +38,20 @@ namespace GabStuff.Scripts
                 
                 currentSpiritObject.TransformSpiritObject(objectPosition-_thisPortal.Position, objectRotation, _thisPortal);
                 currentSpiritObject.SliceMeshAtPortal(_thisPortal);
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            DestroySpiritObject(other.gameObject);
+        }
+
+        public void DestroySpiritObject(GameObject originalObject)
+        {
+            if (_spiritObjects.ContainsKey(originalObject))
+            {
+                Destroy(_spiritObjects[originalObject].SpiritGameObject);
+                _spiritObjects.Remove(originalObject);
             }
         }
     }
