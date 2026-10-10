@@ -15,5 +15,6 @@ MonoBehaviour:
   behindPortal1Shader: {fileID: 4800000, guid: f447a5c027bc4544abf46a40890692f3, type: 3}
   behindPortal2Shader: {fileID: 4800000, guid: 1fc37f2e1ff5eb74aa91c05037e59e72, type: 3}
   spiritRealmLayer: 9
-  playerLayer: 8
-  grabbedObjectLayer: 7
+  worldLayer: 0
+  spiritTag: spirit
+  mirrorTag: mirror

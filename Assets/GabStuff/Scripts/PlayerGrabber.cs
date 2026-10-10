@@ -27,8 +27,6 @@ namespace GabStuff.Scripts
         [Header("Layers")]
         [SerializeField] private LayerMask playerLayerMask;
         
-        private int _playerLayer;
-        private int _grabbedObjectLayer;
         private Player _player;
         private bool _currentlyGrabbing;
         private GrabbedObject _grabbedObject;
@@ -43,9 +41,6 @@ namespace GabStuff.Scripts
         private void Start()
         {
             _player = PlayerManager.Instance.GetPlayer();
-            _playerLayer = GameManager.Instance.GetGameSettings().PlayerLayer;
-            _grabbedObjectLayer = GameManager.Instance.GetGameSettings().GrabbedObjectLayer;
-            Physics.IgnoreLayerCollision(_grabbedObjectLayer, _playerLayer);
         }
 
         public void OnGrab(InputAction.CallbackContext ctx)
@@ -77,12 +72,8 @@ namespace GabStuff.Scripts
         private void Grab(GameObject hitObject)
         {
             _currentlyGrabbing = true;
-            _grabbedObject = new(
-                hitObject,
-                hitObject.GetComponent<PlayerGrabbable>(),
-                hitObject.GetComponent<Rigidbody>()
-            );
-            _grabbedObject.Object.layer = _grabbedObjectLayer;
+            _grabbedObject = new(hitObject);
+            Physics.IgnoreCollision(_grabbedObject.Collider, _player.Collider, true);
             _grabbedObject.Rigidbody.linearDamping = linearDampingStrength;
             //_grabbedObject.Rigidbody.angularDamping = angularDampingStrength;
             _grabbedObject.Rigidbody.useGravity = false;
@@ -93,7 +84,7 @@ namespace GabStuff.Scripts
             _grabbedObject.Rigidbody.useGravity = true;
             _grabbedObject.Rigidbody.linearDamping = 0f;
             _grabbedObject.Rigidbody.angularVelocity = Vector3.zero;
-            _grabbedObject.Object.layer = 0;
+            Physics.IgnoreCollision(_grabbedObject.Collider, _player.Collider, false);
             _currentlyGrabbing = false;
             _grabbedObject = null;
         }

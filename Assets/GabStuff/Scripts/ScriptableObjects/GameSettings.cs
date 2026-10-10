@@ -14,10 +14,15 @@ namespace GabStuff.Scripts.ScriptableObjects
         [SerializeField] private int spiritRealmLayer;
         public int SpiritRealmLayer => spiritRealmLayer;
         
-        [SerializeField] private int playerLayer;
-        public int PlayerLayer => playerLayer;
+        [SerializeField] private int worldLayer;
+        public int WorldLayer => worldLayer;
+
+        [Header("Tags - Make sure they're set in the inspector tags tab")]
         
-        [SerializeField] private int grabbedObjectLayer;
-        public int GrabbedObjectLayer => grabbedObjectLayer;
+        [SerializeField] private string spiritTag;
+        public string SpiritTag => spiritTag;
+
+        [SerializeField] private string mirrorTag;
+        public string MirrorTag => mirrorTag;
     }
 }

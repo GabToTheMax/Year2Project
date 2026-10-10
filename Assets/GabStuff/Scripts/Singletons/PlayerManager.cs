@@ -12,6 +12,7 @@ namespace GabStuff.Scripts.Singletons
         public readonly Rigidbody Rigidbody;
         public readonly Mesh Mesh;
         public readonly Material Material;
+        public readonly Collider Collider;
         public Vector3 Position => Object.transform.position;
 
         public Player(GameObject gameObject, GameObject cameraVertical)
@@ -24,7 +25,7 @@ namespace GabStuff.Scripts.Singletons
             Rigidbody = gameObject.GetComponent<Rigidbody>();
             Mesh = gameObject.GetComponent<MeshFilter>().mesh;
             Material = gameObject.GetComponent<Renderer>().material;
-            
+            Collider = gameObject.GetComponent<Collider>();
         }
     }
     

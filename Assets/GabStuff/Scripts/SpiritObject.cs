@@ -66,7 +66,7 @@ namespace GabStuff.Scripts
             Vector3 objectToPortalVector = (p.Object.transform.position - _originalGameObject.transform.position);
             Vector3 rotatedObjectToPortalVector = Quaternion.Inverse(_originalGameObject.transform.rotation) * objectToPortalVector;
             
-            Plane portalPlane = new Plane(rotatedObjectToPortalVector, normal);
+            Plane portalPlane = new(rotatedObjectToPortalVector, normal);
             var slicedHull = Slicer.Slice(scaledMesh, portalPlane, new TextureRegion(), 0);
             if (slicedHull == null) return;
             var slicedMesh = slicedHull.lowerHull;

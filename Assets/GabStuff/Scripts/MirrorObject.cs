@@ -16,6 +16,7 @@ namespace GabStuff.Scripts
             GameObject mirrorObjectParent = GameManager.Instance.MirrorObjectParent;
             
             MirrorGameObject = new($"{originalObject.name} mirror object");
+            MirrorGameObject.tag = GameManager.Instance.GetGameSettings().MirrorTag;
             MirrorGameObject.transform.parent = mirrorObjectParent.transform;
             MirrorGameObject.AddComponent<MeshFilter>().mesh = originalObject.GetComponent<MeshFilter>().mesh;;
             MirrorGameObject.AddComponent<MeshRenderer>().material = material;

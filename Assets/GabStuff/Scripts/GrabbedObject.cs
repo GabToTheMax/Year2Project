@@ -7,13 +7,15 @@ namespace GabStuff.Scripts
         public readonly GameObject Object;
         public readonly PlayerGrabbable Script;
         public readonly Rigidbody Rigidbody;
+        public readonly Collider Collider;
         public Vector3 Position => Object.transform.position;
         
-        public GrabbedObject(GameObject g, PlayerGrabbable s, Rigidbody r)
+        public GrabbedObject(GameObject g)
         {
             Object = g;
-            Script = s;
-            Rigidbody = r;
+            Script = g.GetComponent<PlayerGrabbable>();
+            Rigidbody = g.GetComponent<Rigidbody>();
+            Collider = g.GetComponent<Collider>();
         }
 
     }
