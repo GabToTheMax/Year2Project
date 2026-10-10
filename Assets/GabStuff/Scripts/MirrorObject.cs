@@ -13,7 +13,7 @@ namespace GabStuff.Scripts
         
         public MirrorObject(GameObject originalObject, Material material)
         {
-            GameObject mirrorObjectParent = GameManager.Instance.MirrorObjectParent;
+            GameObject mirrorObjectParent = PortalManager.Instance.MirrorObjectParent;
             
             MirrorGameObject = new($"{originalObject.name} mirror object");
             MirrorGameObject.tag = GameManager.Instance.GetGameSettings().MirrorTag;

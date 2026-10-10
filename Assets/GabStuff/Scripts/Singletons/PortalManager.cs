@@ -58,6 +58,8 @@ namespace GabStuff.Scripts.Singletons
         private readonly Portal[] _portals = new Portal[2];
         private readonly Dictionary<GameObject, MirrorObject> _mirrors = new(); 
         private GameSettings _gameSettings;
+        public GameObject MirrorObjectParent { get; private set; }
+        public GameObject SpiritObjectParent { get; private set; }
 
         public void SetPortal(Portal portal)
         {
@@ -91,6 +93,22 @@ namespace GabStuff.Scripts.Singletons
         public Portal[] GetPortals()
         {
             return _portals;
+        }
+
+        public void RegisterObject(GameObject go, RegisterType type)
+        {
+            switch (type)
+            {
+                case RegisterType.MirrorObjectParent:
+                    MirrorObjectParent = go;
+                    break;
+                case RegisterType.SpiritObjectParent:
+                    SpiritObjectParent = go;
+                    break;
+                default:
+                    throw new Exception($"Portal manager only accepts Mirror and Spirit parents");
+                    
+            }
         }
     }
 }

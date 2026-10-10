@@ -22,7 +22,7 @@ namespace GabStuff.Scripts
             _collisionMesh = g.GetComponent<MeshCollider>().sharedMesh;
             
             SpiritGameObject = new GameObject($"{_originalGameObject.name} spirit object");
-            GameObject spiritObjectParent = GameManager.Instance.SpiritObjectParent;
+            GameObject spiritObjectParent = PortalManager.Instance.SpiritObjectParent;
             SpiritGameObject.transform.SetParent(spiritObjectParent.transform);
             _spiritCollider = SpiritGameObject.AddComponent<MeshCollider>();
             _spiritCollider.sharedMesh = _collisionMesh;

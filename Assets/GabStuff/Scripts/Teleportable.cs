@@ -12,7 +12,7 @@ namespace GabStuff.Scripts
         }
     
         /// <summary>
-        /// Inverts the things momentum
+        /// Inverts the object's momentum
         /// </summary>
         public void RotateMomentum(Quaternion rotation)
         {

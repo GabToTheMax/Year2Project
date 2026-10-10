@@ -29,8 +29,6 @@ namespace GabStuff.Scripts.Singletons
         #endregion
         
         private GameSettings _gameSettings;
-        public GameObject MirrorObjectParent { get; private set; }
-        public GameObject SpiritObjectParent { get; private set; }
 
         public GameSettings GetGameSettings()
         {
@@ -65,11 +63,11 @@ namespace GabStuff.Scripts.Singletons
             switch (registerType)
             {
                 case RegisterType.MirrorObjectParent:
-                    MirrorObjectParent = go;
+                    PortalManager.Instance.RegisterObject(go, registerType);
                     break;
                 
                 case RegisterType.SpiritObjectParent:
-                    SpiritObjectParent= go;
+                    PortalManager.Instance.RegisterObject(go, registerType);
                     break;
                 
                 default:
