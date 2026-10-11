@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GabStuff.Scripts.ScriptableObjects;
 using Unity.VectorGraphics;
 using Unity.VisualScripting;
@@ -29,6 +30,7 @@ namespace GabStuff.Scripts.Singletons
         #endregion
         
         private GameSettings _gameSettings;
+        public GameObject WorldHolder { get; private set; }
 
         public GameSettings GetGameSettings()
         {
@@ -70,9 +72,31 @@ namespace GabStuff.Scripts.Singletons
                     PortalManager.Instance.RegisterObject(go, registerType);
                     break;
                 
+                case RegisterType.WorldHolder:
+                    WorldHolder = go;
+                    break;
+                
                 default:
-                    throw new Exception($"Unknown registerType {registerType}");
+                    Debug.LogError($"Unknown registerType {registerType}");
+                    break;
             }
+        }
+        
+        public GameObject[] GetEveryObject()
+        {
+            if (WorldHolder == null)
+            {
+                Debug.LogError("Missing world holder");
+                EditorApplication.isPlaying = false;
+                Application.Quit();
+            }
+            Transform[] transforms = WorldHolder.GetComponentsInChildren<Transform>(false);
+            GameObject[] gameObjects = new GameObject[transforms.Length];
+            for (var i = 0; i < transforms.Length; i++)
+            {
+                gameObjects[i] = transforms[i].gameObject;
+            }
+            return gameObjects;
         }
     }
 }

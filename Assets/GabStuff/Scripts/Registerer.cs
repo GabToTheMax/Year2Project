@@ -7,6 +7,7 @@ namespace GabStuff.Scripts
     {
         MirrorObjectParent,
         SpiritObjectParent,
+        WorldHolder
     }
 
     public class Registerer : MonoBehaviour

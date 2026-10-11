@@ -71,7 +71,7 @@ namespace GabStuff.Scripts
                 _player.Camera.fieldOfView = fieldOfView;
             }
             
-            var portals = PortalManager.Instance.GetPortals();
+            var portals = PortalManager.Instance.Portals;
             if (!Mathf.Approximately(portals[0].Camera.fieldOfView, fieldOfView))
             {
                 foreach (Portal portal in portals)
@@ -120,12 +120,12 @@ namespace GabStuff.Scripts
         
         private void OnBeginCameraRendering(ScriptableRenderContext context, Camera cam)
         {
-            if (cam == PortalManager.Instance.GetPortals()[0].Camera)
+            if (cam == PortalManager.Instance.Portals[0].Camera)
             {
                 Shader.SetGlobalFloat("_CurrentCameraRendering", 1.0f);
                 //print("A");
             }
-            else if (cam == PortalManager.Instance.GetPortals()[1].Camera)
+            else if (cam == PortalManager.Instance.Portals[1].Camera)
             {
                 Shader.SetGlobalFloat("_CurrentCameraRendering", 2.0f);
                 //print("B");

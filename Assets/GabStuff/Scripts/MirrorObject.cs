@@ -1,18 +1,21 @@
-using System;
+using GabStuff.Scripts.ScriptableObjects;
 using GabStuff.Scripts.Singletons;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GabStuff.Scripts
 {
     public class MirrorObject
     {
-        private readonly GameObject _mirrorObject;
+        public readonly GameObject OriginalGameObject;
         public readonly GameObject MirrorGameObject;
         public bool IsTeleporting;
         public Material OriginalMaterial;
         
         public MirrorObject(GameObject originalObject, Material material)
         {
+            OriginalGameObject = originalObject;
             GameObject mirrorObjectParent = PortalManager.Instance.MirrorObjectParent;
             
             MirrorGameObject = new($"{originalObject.name} mirror object");
@@ -38,6 +41,12 @@ namespace GabStuff.Scripts
         public void SetMirrorRotation(Quaternion otherPortalRotationDifference, Quaternion objectRotation, GameObject otherPortal)
         {
             MirrorGameObject.transform.rotation = Quaternion.AngleAxis(180f, otherPortal.transform.up) * otherPortalRotationDifference * objectRotation;
+        }
+
+        public void Cleanup()
+        {
+            Object.Destroy(MirrorGameObject);
+            OriginalGameObject.GetComponent<MeshRenderer>().material = OriginalMaterial;
         }
     }
 }

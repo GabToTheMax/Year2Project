@@ -2,6 +2,12 @@ using System;
 using System.Collections.Generic;
 using GabStuff.Scripts.ScriptableObjects;
 using UnityEngine;
+using EzySlice;
+using GabStuff.Scripts.Singletons;
+using UnityEngine.UIElements;
+using UnityEngine.XR.ARSubsystems;
+using Object = UnityEngine.Object;
+using Plane = EzySlice.Plane;
 
 namespace GabStuff.Scripts.Singletons
 {
@@ -14,24 +20,24 @@ namespace GabStuff.Scripts.Singletons
     {
         public readonly PortalScript Script;
         public readonly PortalTeleportationScript TeleportationScript;
-        public readonly GameObject Object;
+        public readonly GameObject GameObject;
         public readonly Camera Camera;
         public readonly Material Material;
         public readonly Mesh Mesh;
         public readonly int Index;
         public readonly SpiritRealm SpiritRealm;
-        public Vector3 Position => Object.transform.position;
+        public Vector3 Position => GameObject.transform.position;
 
         public Portal(GameObject o, Material m)
         {
-            Object = o;
-            Script = Object.GetComponent<PortalScript>();
+            GameObject = o;
+            Script = GameObject.GetComponent<PortalScript>();
             Index = Script.index;
-            Camera = Object.GetComponentInChildren<Camera>();
+            Camera = GameObject.GetComponentInChildren<Camera>();
             Material = m;
-            Mesh = Object.GetComponentInChildren<MeshFilter>().mesh;
-            SpiritRealm = Object.GetComponent<SpiritRealm>();
-            TeleportationScript = Object.GetComponent<PortalTeleportationScript>();
+            Mesh = GameObject.GetComponentInChildren<MeshFilter>().mesh;
+            SpiritRealm = GameObject.GetComponent<SpiritRealm>();
+            TeleportationScript = GameObject.GetComponent<PortalTeleportationScript>();
         }
     }
     
@@ -55,19 +61,20 @@ namespace GabStuff.Scripts.Singletons
         }
         #endregion
 
-        private readonly Portal[] _portals = new Portal[2];
-        private readonly Dictionary<GameObject, MirrorObject> _mirrors = new(); 
+        public readonly Portal[] Portals = new Portal[2];
+        public readonly Dictionary<GameObject, MirrorObject> Mirrors = new();
+        public readonly Dictionary<GameObject, PortalledObject> Portalled = new();
         private GameSettings _gameSettings;
         public GameObject MirrorObjectParent { get; private set; }
         public GameObject SpiritObjectParent { get; private set; }
 
         public void SetPortal(Portal portal)
         {
-            if (_portals[portal.Index] != null)
+            if (Portals[portal.Index] != null)
             {
                 throw new Exception("Portals must have different indexes");
             }
-            _portals[portal.Index] = portal;
+            Portals[portal.Index] = portal;
         }
 
         /// <summary>
@@ -76,23 +83,13 @@ namespace GabStuff.Scripts.Singletons
         /// <param name="thisPortal">Reference to the portal calling the function</param>
         public Portal GetPortal(Portal thisPortal)
         {
-            Portal otherPortal = _portals[1-thisPortal.Index];
+            Portal otherPortal = Portals[1-thisPortal.Index];
             if (otherPortal != null)
             {
                 return otherPortal;
             }
 
             return null;
-        }
-
-        public Dictionary<GameObject, MirrorObject> GetMirrors()
-        {
-            return _mirrors;
-        }
-
-        public Portal[] GetPortals()
-        {
-            return _portals;
         }
 
         public void RegisterObject(GameObject go, RegisterType type)
@@ -107,8 +104,24 @@ namespace GabStuff.Scripts.Singletons
                     break;
                 default:
                     throw new Exception($"Portal manager only accepts Mirror and Spirit parents");
-                    
             }
+        }
+        
+        public static Mesh ScaleMesh(Mesh mesh, Vector3 scale)
+        {
+            if (mesh.vertices.Length == 0) return mesh;
+            Vector3[] vertices = mesh.vertices;
+
+            for (var i = 0; i < vertices.Length; i++)
+            {
+                vertices[i] = Vector3.Scale(mesh.vertices[i], scale);
+            }
+
+            Mesh newMesh = Object.Instantiate(mesh);
+            newMesh.vertices = vertices;
+            newMesh.RecalculateBounds();
+            
+            return newMesh;
         }
     }
 }

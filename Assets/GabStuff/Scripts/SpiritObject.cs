@@ -39,38 +39,26 @@ namespace GabStuff.Scripts
             SpiritGameObject.transform.position = targetPortal.Position + localObjectPosition;
             SpiritGameObject.transform.rotation = objectRotation;
         }
-
-        private static Mesh ScaleMesh(Mesh mesh, Vector3 scale)
-        {
-            if (mesh.vertices.Length == 0) return mesh;
-            Vector3[] vertices = mesh.vertices;
-
-            for (var i = 0; i < vertices.Length; i++)
-            {
-                vertices[i] = Vector3.Scale(mesh.vertices[i], scale);
-            }
-
-            Mesh newMesh = Object.Instantiate(mesh);
-            newMesh.vertices = vertices;
-            newMesh.RecalculateBounds();
-            
-            return newMesh;
-        }
         
         public void SliceMeshAtPortal(Portal p)
         {
-            Mesh scaledMesh = ScaleMesh(_collisionMesh, _originalGameObject.transform.localScale); 
+            Mesh scaledMesh = PortalManager.ScaleMesh(_collisionMesh, _originalGameObject.transform.localScale); 
             
-            Vector3 normal = Quaternion.Inverse(_originalGameObject.transform.rotation) * p.Object.transform.forward;
+            Vector3 normal = Quaternion.Inverse(_originalGameObject.transform.rotation) * p.GameObject.transform.forward;
             
-            Vector3 objectToPortalVector = (p.Object.transform.position - _originalGameObject.transform.position);
+            Vector3 objectToPortalVector = (p.GameObject.transform.position - _originalGameObject.transform.position);
             Vector3 rotatedObjectToPortalVector = Quaternion.Inverse(_originalGameObject.transform.rotation) * objectToPortalVector;
             
-            Plane portalPlane = new(rotatedObjectToPortalVector, normal);
+            EzySlice.Plane portalPlane = new(rotatedObjectToPortalVector, normal);
             var slicedHull = Slicer.Slice(scaledMesh, portalPlane, new TextureRegion(), 0);
             if (slicedHull == null) return;
             var slicedMesh = slicedHull.lowerHull;
             _spiritCollider.sharedMesh = slicedMesh;
+        }
+
+        public void Cleanup()
+        {
+            Object.Destroy(SpiritGameObject);
         }
     }
 }

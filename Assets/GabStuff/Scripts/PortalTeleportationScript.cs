@@ -19,16 +19,16 @@ namespace GabStuff.Scripts
         private Player _player;
         private Quaternion _portalRotationDifference;
         private Vector3 _otherPortalToMirror;
-        private Dictionary<GameObject, MirrorObject> _mirrors = PortalManager.Instance.GetMirrors();
+        private Dictionary<GameObject, MirrorObject> _mirrors = PortalManager.Instance.Mirrors;
         private GameSettings _gameSettings;
         #endregion
         
         private void Start()
         {
-            _mirrors = PortalManager.Instance.GetMirrors();
+            _mirrors = PortalManager.Instance.Mirrors;
             _thisPortal = GetComponent<PortalScript>().ThisPortal;
             _otherPortal = PortalManager.Instance.GetPortal(_thisPortal);
-            _portalCollider = _thisPortal.Object.GetComponent<Collider>();
+            _portalCollider = _thisPortal.GameObject.GetComponent<Collider>();
             _player = PlayerManager.Instance.GetPlayer();
             _gameSettings = GameManager.Instance.GetGameSettings();
         }
@@ -84,12 +84,8 @@ namespace GabStuff.Scripts
             {
                 print("Something exited my collision. Sincerely portal #" + _thisPortal.Index);
                 
-                _otherPortal.SpiritRealm.DestroySpiritObject(_mirrors[other.gameObject].MirrorGameObject);
-                
-                Destroy(_mirrors[other.gameObject].MirrorGameObject);
-                Material originalMaterial = _mirrors[other.gameObject].OriginalMaterial;
+                _mirrors[other.gameObject].Cleanup();
                 _mirrors.Remove(other.gameObject);
-                other.gameObject.GetComponent<MeshRenderer>().material = originalMaterial;
             }
             else if (_mirrors.Keys.Contains(other.gameObject) && _mirrors[other.gameObject].IsTeleporting)
             {
@@ -124,7 +120,7 @@ namespace GabStuff.Scripts
             _otherPortalToMirror = _portalRotationDifference * _thisPortal.Script.Flip180 * portalToObject;
             
             mirror.SetMirrorPosition(_otherPortalToMirror, _otherPortal);
-            mirror.SetMirrorRotation(_portalRotationDifference, objectToMove.transform.rotation, _otherPortal.Object);
+            mirror.SetMirrorRotation(_portalRotationDifference, objectToMove.transform.rotation, _otherPortal.GameObject);
         }
 
         private void Teleport(GameObject objectToTeleport)
@@ -137,8 +133,8 @@ namespace GabStuff.Scripts
             }
             else
             {
-                objectToTeleport.transform.rotation = Quaternion.AngleAxis(180f, _otherPortal.Object.transform.up) * _portalRotationDifference * objectToTeleport.transform.rotation;
-                objectToTeleport.GetComponent<Teleportable>().RotateMomentum(Quaternion.AngleAxis(180f, _thisPortal.Object.transform.up) * _portalRotationDifference);
+                objectToTeleport.transform.rotation = Quaternion.AngleAxis(180f, _otherPortal.GameObject.transform.up) * _portalRotationDifference * objectToTeleport.transform.rotation;
+                objectToTeleport.GetComponent<Teleportable>().RotateMomentum(Quaternion.AngleAxis(180f, _thisPortal.GameObject.transform.up) * _portalRotationDifference);
             }
             
             objectToTeleport.transform.position = _otherPortal.Position + _otherPortalToMirror;

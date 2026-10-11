@@ -24,7 +24,7 @@ namespace GabStuff.Scripts
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == GameManager.Instance.GetGameSettings().SpiritTag) return;
+            if (other.tag == GameManager.Instance.GetGameSettings().SpiritTag || _spiritObjects.ContainsKey(other.gameObject)) return;
             
             var original = other.gameObject;
             
@@ -50,15 +50,10 @@ namespace GabStuff.Scripts
 
         private void OnTriggerExit(Collider other)
         {
-            DestroySpiritObject(other.gameObject);
-        }
-
-        public void DestroySpiritObject(GameObject originalObject)
-        {
-            if (_spiritObjects.ContainsKey(originalObject))
+            if (_spiritObjects.ContainsKey(other.gameObject))
             {
-                Destroy(_spiritObjects[originalObject].SpiritGameObject);
-                _spiritObjects.Remove(originalObject);
+                _spiritObjects[other.gameObject].Cleanup();
+                _spiritObjects.Remove(other.gameObject);
             }
         }
     }

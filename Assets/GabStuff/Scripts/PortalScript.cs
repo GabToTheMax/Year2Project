@@ -40,7 +40,7 @@ namespace GabStuff.Scripts
 
         private void Update()
         {
-            _flip180 = Quaternion.AngleAxis(180, _thisPortal.Object.transform.up);
+            _flip180 = Quaternion.AngleAxis(180, _thisPortal.GameObject.transform.up);
             MoveCamera();
             RotateCamera();
             SetClippingPlane();
@@ -55,14 +55,14 @@ namespace GabStuff.Scripts
             Vector3 otherPortalPos = _otherPortal.Position;
             
             // Quaternion black magic to account for rotated portals
-            _vectorToPlayerCamera = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation) * _vectorToPlayerCamera;
+            _vectorToPlayerCamera = _otherPortal.GameObject.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation) * _vectorToPlayerCamera;
             
             _thisPortal.Camera.transform.position = otherPortalPos + _vectorToPlayerCamera;
         }
 
         private void RotateCamera()
         {
-            _portalRotationDifference = _otherPortal.Object.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
+            _portalRotationDifference = _otherPortal.GameObject.transform.rotation * Quaternion.Inverse(gameObject.transform.rotation);
             _portalCameraRotation = _portalRotationDifference * (_flip180 * _player.Camera.transform.rotation);
             _thisPortal.Camera.transform.rotation = _portalCameraRotation;
             
@@ -76,8 +76,8 @@ namespace GabStuff.Scripts
 
         private void SetClippingPlane()
         {
-            var normalToPlane = _thisPortal.Object.transform.forward;
-            var pointOnPlane = _thisPortal.Object.transform.position;
+            var normalToPlane = _thisPortal.GameObject.transform.forward;
+            var pointOnPlane = _thisPortal.GameObject.transform.position;
 
             switch (_thisPortal.Index)
             {
