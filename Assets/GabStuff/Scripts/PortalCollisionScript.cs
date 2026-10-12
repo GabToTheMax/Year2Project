@@ -21,6 +21,7 @@ namespace GabStuff.Scripts
             if (other.GetComponent<Teleportable>() && !_portalled.ContainsKey(other.gameObject))
             {
                 _portalled.Add(other.gameObject, new PortalledObject(other.gameObject));
+                print("The portalled object has been fully setup");
             }
         }
 
@@ -34,12 +35,10 @@ namespace GabStuff.Scripts
 
         private void OnTriggerExit(Collider other)
         {
-            print($"Something just left");
-            if (_portalled.ContainsKey(other.gameObject) && !_portalled[other.gameObject].IsTeleporting )
-            {
-                _portalled[other.gameObject].Cleanup();
-                _portalled.Remove(other.gameObject);
-            }
+            if (!_portalled.ContainsKey(other.gameObject)) return;
+            
+            _portalled[other.gameObject].Cleanup();
+            _portalled.Remove(other.gameObject);
         }
     }
 }

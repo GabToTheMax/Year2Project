@@ -26,10 +26,10 @@ namespace GabStuff.Scripts
         
         [Header("Layers")]
         [SerializeField] private LayerMask playerLayerMask;
-        
+
+        public GrabbedObject GrabbedObject { get; private set; }
+        public bool CurrentlyGrabbing { get; private set; }
         private Player _player;
-        private bool _currentlyGrabbing;
-        private GrabbedObject _grabbedObject;
         private Vector3 _facingVector;
         private Vector3 _grabbedTarget;
         private bool _isGrabbedObjectInFront;
@@ -47,7 +47,7 @@ namespace GabStuff.Scripts
         {
             if(!ctx.performed) return;
 
-            if (_currentlyGrabbing)
+            if (CurrentlyGrabbing)
             {
                 Ungrab();
                 return;
@@ -71,22 +71,49 @@ namespace GabStuff.Scripts
 
         private void Grab(GameObject hitObject)
         {
-            _currentlyGrabbing = true;
-            _grabbedObject = new(hitObject);
-            Physics.IgnoreCollision(_grabbedObject.Collider, _player.Collider, true);
-            _grabbedObject.Rigidbody.linearDamping = linearDampingStrength;
+            CurrentlyGrabbing = true;
+            GrabbedObject = new(hitObject);
+
+            // TODO what if the player has mulitple colliders
+            if (PortalManager.Instance.Portalled.Keys.Contains(GrabbedObject.GameObject))
+            {
+                foreach (Collider c in GrabbedObject.Colliders)
+                {
+                    Physics.IgnoreCollision(c, _player.Collider, true);
+                }
+            }
+            else
+            {
+                Physics.IgnoreCollision(GrabbedObject.Colliders[0], _player.Collider, true);
+            }
+
+            GrabbedObject.Rigidbody.linearDamping = linearDampingStrength;
             //_grabbedObject.Rigidbody.angularDamping = angularDampingStrength;
-            _grabbedObject.Rigidbody.useGravity = false;
+            GrabbedObject.Rigidbody.useGravity = false;
         }
 
         private void Ungrab()
         {
-            _grabbedObject.Rigidbody.useGravity = true;
-            _grabbedObject.Rigidbody.linearDamping = 0f;
-            _grabbedObject.Rigidbody.angularVelocity = Vector3.zero;
-            Physics.IgnoreCollision(_grabbedObject.Collider, _player.Collider, false);
-            _currentlyGrabbing = false;
-            _grabbedObject = null;
+            GrabbedObject.Rigidbody.useGravity = true;
+            GrabbedObject.Rigidbody.linearDamping = 0f;
+            GrabbedObject.Rigidbody.angularVelocity = Vector3.zero;
+
+            if (PortalManager.Instance.Portalled.Keys.Contains(GrabbedObject.GameObject))
+            {
+                foreach (Collider c in GrabbedObject.Colliders)
+                foreach (PortalledObject p in PortalManager.Instance.Portalled.Values)
+                {
+                    bool ignore = p.SpiritSideCollider == c || p.OriginalCollider == c;
+                    Physics.IgnoreCollision(_player.Collider, c, ignore);
+                }
+            }
+            else
+            {
+                Physics.IgnoreCollision(GrabbedObject.Colliders[0], _player.Collider, false);
+            }
+            
+            CurrentlyGrabbing = false;
+            GrabbedObject = null;
         }
 
         private void Update()
@@ -103,7 +130,7 @@ namespace GabStuff.Scripts
 
         private void AffectGrabbedObject()
         {
-            if (!_currentlyGrabbing) return;
+            if (!CurrentlyGrabbing) return;
 
             SetGrabbedPosition();
             SetGrabbedRotation();
@@ -120,12 +147,12 @@ namespace GabStuff.Scripts
             );
             
             bool containsWall = false;
-            float closestDistance = reach + _grabbedObject.Script.GetRadius();
+            float closestDistance = reach + GrabbedObject.Script.GetRadius();
             RaycastHit closestHit = default;
             foreach (RaycastHit hit in hits)
             {
                 GameObject hitObject = hit.transform.gameObject;
-                if (hitObject != _grabbedObject.Object)
+                if (hitObject != GrabbedObject.GameObject)
                 {
                     containsWall = true;
                     if(hit.distance <= closestDistance)
@@ -137,15 +164,15 @@ namespace GabStuff.Scripts
             }
 
             if (containsWall)
-                _grabbedTarget = closestHit.point + closestHit.normal.normalized * _grabbedObject.Script.GetRadius();
+                _grabbedTarget = closestHit.point + closestHit.normal.normalized * GrabbedObject.Script.GetRadius();
             else
                 _grabbedTarget = _player.Camera.transform.position + _facingVector * reach;
 
-            Vector3 force = -_grabbedObject.Position +
+            Vector3 force = -GrabbedObject.Position +
                             _grabbedTarget +
                             _player.Rigidbody.linearVelocity * moveCompensation;
             
-            _grabbedObject.Rigidbody.AddForce(
+            GrabbedObject.Rigidbody.AddForce(
                 force*forceStrength,
                 (ForceMode)forceMode
             );
@@ -153,9 +180,9 @@ namespace GabStuff.Scripts
         
         private void SetGrabbedRotation()
         {
-            Vector3 grabbedToPlayer = _player.Object.transform.forward;
+            Vector3 grabbedToPlayer = _player.GameObject.transform.forward;
             grabbedToPlayer.y = 0;
-            _grabbedObject.Object.transform.rotation = Quaternion.LookRotation(grabbedToPlayer,Vector3.up);
+            GrabbedObject.GameObject.transform.rotation = Quaternion.LookRotation(grabbedToPlayer,Vector3.up);
 
             /*Quaternion targetRotation = Quaternion.LookRotation(
                 grabbedToPlayer,
@@ -174,9 +201,9 @@ namespace GabStuff.Scripts
              * If the target is outside of the object, but has line of sight, it will return true, then true
              * If the target is outside of the object, but doesn't have line of sight, it will return true then false
              */
-            if (Physics.Linecast(_grabbedTarget, _grabbedObject.Position, out var hit))
+            if (Physics.Linecast(_grabbedTarget, GrabbedObject.Position, out var hit))
             {
-                if (hit.transform.gameObject == _grabbedObject.Object)
+                if (hit.transform.gameObject == GrabbedObject.GameObject)
                 {
                     _isGrabbedObjectInFront = true;
                     _isFirstTime = true;

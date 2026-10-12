@@ -18,3 +18,4 @@ MonoBehaviour:
   worldLayer: 0
   spiritTag: spirit
   mirrorTag: mirror
+  portalTag: portal

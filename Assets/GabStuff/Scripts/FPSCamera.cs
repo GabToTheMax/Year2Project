@@ -85,11 +85,11 @@ namespace GabStuff.Scripts
         {
             _xRotation += _smoothMouseInput.x * cameraSensitivityX;
             playerDirection = _xRotation;
-            _player.Object.transform.rotation = Quaternion.Euler
+            _player.GameObject.transform.rotation = Quaternion.Euler
             (
-                _player.Object.transform.rotation.eulerAngles.x,
+                _player.GameObject.transform.rotation.eulerAngles.x,
                 _xRotation,
-                _player.Object.transform.rotation.eulerAngles.z
+                _player.GameObject.transform.rotation.eulerAngles.z
             );
 
             var playerDirectionVector = Quaternion.AngleAxis(playerDirection, Vector3.up) * Vector3.forward;

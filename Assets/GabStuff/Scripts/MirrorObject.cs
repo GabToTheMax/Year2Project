@@ -43,6 +43,11 @@ namespace GabStuff.Scripts
             MirrorGameObject.transform.rotation = Quaternion.AngleAxis(180f, otherPortal.transform.up) * otherPortalRotationDifference * objectRotation;
         }
 
+        public void SetMirrorScale(Vector3 scale)
+        {
+            MirrorGameObject.transform.localScale = scale;
+        }
+
         public void Cleanup()
         {
             Object.Destroy(MirrorGameObject);

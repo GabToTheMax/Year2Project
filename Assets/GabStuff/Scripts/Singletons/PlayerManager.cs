@@ -4,7 +4,7 @@ namespace GabStuff.Scripts.Singletons
 {
     public class Player
     {
-        public readonly GameObject Object;
+        public readonly GameObject GameObject;
         public readonly GameObject CameraVertical;
         public readonly Camera Camera;
         public readonly FPSCamera CameraScript;
@@ -13,19 +13,21 @@ namespace GabStuff.Scripts.Singletons
         public readonly Mesh Mesh;
         public readonly Material Material;
         public readonly Collider Collider;
-        public Vector3 Position => Object.transform.position;
+        public readonly PlayerGrabber PlayerGrabber;
+        public Vector3 Position => GameObject.transform.position;
 
-        public Player(GameObject gameObject, GameObject cameraVertical)
+        public Player(GameObject gameGameObject, GameObject cameraVertical)
         {
-            Object = gameObject;
+            GameObject = gameGameObject;
             CameraVertical = cameraVertical;
-            Camera = gameObject.GetComponentInChildren<Camera>();
-            CameraScript = gameObject.GetComponent<FPSCamera>();
-            MovementScript = gameObject.GetComponent<PlayerMovement>();
-            Rigidbody = gameObject.GetComponent<Rigidbody>();
-            Mesh = gameObject.GetComponent<MeshFilter>().mesh;
-            Material = gameObject.GetComponent<Renderer>().material;
-            Collider = gameObject.GetComponent<Collider>();
+            Camera = gameGameObject.GetComponentInChildren<Camera>();
+            CameraScript = gameGameObject.GetComponent<FPSCamera>();
+            MovementScript = gameGameObject.GetComponent<PlayerMovement>();
+            Rigidbody = gameGameObject.GetComponent<Rigidbody>();
+            Mesh = gameGameObject.GetComponent<MeshFilter>().mesh;
+            Material = gameGameObject.GetComponent<Renderer>().material;
+            Collider = gameGameObject.GetComponent<Collider>();
+            PlayerGrabber = gameGameObject.GetComponent<PlayerGrabber>();
         }
     }
     

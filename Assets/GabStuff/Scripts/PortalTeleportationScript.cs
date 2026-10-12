@@ -63,6 +63,7 @@ namespace GabStuff.Scripts
                 
                 _mirrors.Add(other.gameObject, new MirrorObject(other.GameObject(), mirrorMaterial));
                 _mirrors[other.gameObject].OriginalMaterial = originalMaterialCopy;
+                _mirrors[other.gameObject].SetMirrorScale(other.gameObject.transform.localScale);
             }
         }
 
@@ -126,7 +127,7 @@ namespace GabStuff.Scripts
         private void Teleport(GameObject objectToTeleport)
         {
             _mirrors[objectToTeleport].IsTeleporting = true;
-            if (objectToTeleport == _player.Object)
+            if (objectToTeleport == _player.GameObject)
             {
                 _player.CameraScript.AddXRotation(180f + _portalRotationDifference.eulerAngles.y);
                 _player.MovementScript.RotateMomentum(Quaternion.AngleAxis(180f, Vector3.up) * _portalRotationDifference);

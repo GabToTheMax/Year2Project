@@ -24,5 +24,8 @@ namespace GabStuff.Scripts.ScriptableObjects
 
         [SerializeField] private string mirrorTag;
         public string MirrorTag => mirrorTag;
+        
+        [SerializeField] private string portalTag;
+        public string PortalTag => portalTag;
     }
 }
